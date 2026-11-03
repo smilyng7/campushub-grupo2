@@ -1,4 +1,4 @@
-# Proyecto-JavaScript
+
 
 Integrantes del Grupo2:
 Cruz Quispe Evelyn Crisherat 
