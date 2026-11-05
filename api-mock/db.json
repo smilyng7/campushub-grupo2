@@ -1,0 +1,171 @@
+{
+    "usuarios": [
+        {
+            "id": 1,
+            "nombre": "Ana Torres",
+            "correo": "admin1@utp.edu.pe",
+            "codigo": "A00000001",
+            "rol": "admin",
+            "password": "admin123"
+        },
+        {
+            "id": 2,
+            "nombre": "Carlos Pérez",
+            "correo": "admin2@utp.edu.pe",
+            "codigo": "A00000002",
+            "rol": "admin",
+            "password": "admin123"
+        },
+        {
+            "id": 3,
+            "nombre": "Luis Quispe",
+            "correo": "u20231234@utp.edu.pe",
+            "codigo": "U20231234",
+            "rol": "estudiante",
+            "password": "est123"
+        },
+        {
+            "id": 4,
+            "nombre": "Maria Gomez",
+            "correo": "u20235678@utp.edu.pe",
+            "codigo": "U20235678",
+            "rol": "estudiante",
+            "password": "est123"
+        },
+        {
+            "id": 5,
+            "nombre": "Jorge Ruiz",
+            "correo": "u20239012@utp.edu.pe",
+            "codigo": "U20239012",
+            "rol": "estudiante",
+            "password": "est123"
+        },
+        {
+            "id": 6,
+            "nombre": "Sofia Ramos",
+            "correo": "u20233456@utp.edu.pe",
+            "codigo": "U20233456",
+            "rol": "estudiante",
+            "password": "est123"
+        },
+        {
+            "id": 7,
+            "nombre": "Pedro Castillo",
+            "correo": "u20237890@utp.edu.pe",
+            "codigo": "U20237890",
+            "rol": "estudiante",
+            "password": "est123"
+        },
+        {
+            "id": 8,
+            "nombre": "Lucia Mendez",
+            "correo": "u20231122@utp.edu.pe",
+            "codigo": "U20231122",
+            "rol": "estudiante",
+            "password": "est123"
+        }
+    ],
+    "laboratorios": [
+        {
+            "id": 1,
+            "nombre": "Lab A-301",
+            "sede": "Lima Centro",
+            "capacidad": 30,
+            "equipos": [
+                "PC i7",
+                "Proyector"
+            ],
+            "estado": "disponible"
+        },
+        {
+            "id": 2,
+            "nombre": "Lab B-205",
+            "sede": "Lima Sur",
+            "capacidad": 24,
+            "equipos": [
+                "PC i5",
+                "Arduino"
+            ],
+            "estado": "mantenimiento"
+        },
+        {
+            "id": 3,
+            "nombre": "Lab C-102",
+            "sede": "Lima Norte",
+            "capacidad": 40,
+            "equipos": [
+                "MacBook",
+                "Apple TV"
+            ],
+            "estado": "disponible"
+        },
+        {
+            "id": 4,
+            "nombre": "Lab D-404",
+            "sede": "Lima Centro",
+            "capacidad": 20,
+            "equipos": [
+                "PC i7",
+                "Tablets"
+            ],
+            "estado": "disponible"
+        },
+        {
+            "id": 5,
+            "nombre": "Lab E-501",
+            "sede": "Lima Este",
+            "capacidad": 35,
+            "equipos": [
+                "PCs Ryzen",
+                "Proyector"
+            ],
+            "estado": "disponible"
+        },
+        {
+            "id": 6,
+            "nombre": "Lab F-202",
+            "sede": "Lima Sur",
+            "capacidad": 25,
+            "equipos": [
+                "PCs i5"
+            ],
+            "estado": "mantenimiento"
+        },
+        {
+            "id": 7,
+            "nombre": "Lab G-303",
+            "sede": "Lima Norte",
+            "capacidad": 30,
+            "equipos": [
+                "Impresora 3D",
+                "PCs i7"
+            ],
+            "estado": "disponible"
+        },
+        {
+            "id": 8,
+            "nombre": "Lab H-101",
+            "sede": "Lima Este",
+            "capacidad": 50,
+            "equipos": [
+                "Auditorios",
+                "Pantallas LED"
+            ],
+            "estado": "disponible"
+        }
+    ],
+    "reservas": [
+        {
+            "id": 1,
+            "codigo": "RES-0001",
+            "laboratorioId": 1,
+            "usuarioId": 3,
+            "fecha": "2026-11-20",
+            "horaInicio": "08:00",
+            "horaFin": "10:00",
+            "motivo": "Práctica de React",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-15T10:00:00Z"
+        }
+    ]
+}
