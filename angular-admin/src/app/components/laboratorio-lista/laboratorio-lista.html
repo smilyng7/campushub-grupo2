@@ -56,6 +56,11 @@
                 </span>
               </td>
               <td>
+                <a
+                  class="btn btn-primary btn-sm me-2"
+                  [routerLink]="['/laboratorio', lab.id]">
+                  Editar
+                </a>
                 <button class="btn btn-danger btn-sm"
                   (click)="eliminarLaboratorio(lab.id!)">
                   Eliminar

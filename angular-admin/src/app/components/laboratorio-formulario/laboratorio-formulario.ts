@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -34,7 +34,8 @@ export class LaboratorioFormulario implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private laboratorioService: LaboratorioService
+    private laboratorioService: LaboratorioService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -51,11 +52,13 @@ export class LaboratorioFormulario implements OnInit {
             this.laboratorio = data;
             this.equiposTexto = data.equipos.join(', ');
             this.cargando = false;
+            this.cdr.detectChanges();
           },
           error: (error) => {
             console.error('Error al cargar laboratorio:', error);
-            alert('No se pudo cargar el laboratorio.');
             this.cargando = false;
+            this.cdr.detectChanges();
+            alert('No se pudo cargar el laboratorio.');
             this.router.navigate(['/laboratorios']);
           }
         });
