@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <div class="contenedor">
 
@@ -58,3 +59,69 @@
   </table>
 
 </div>
+=======
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Laboratorios</h2>
+    <a class="btn btn-primary" routerLink="/laboratorios/nuevo">
+      Nuevo laboratorio
+    </a>
+  </div>
+
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Sede</th>
+          <th>Capacidad</th>
+          <th>Equipos</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (lab of laboratorios; track lab.id) {
+          <tr [ngClass]="{ 'table-warning': lab.estado === 'mantenimiento' }">
+            <td>{{ lab.nombre }}</td>
+            <td>{{ lab.sede }}</td>
+            <td>{{ lab.capacidad }}</td>
+            <td>{{ lab.equipos.join(', ') }}</td>
+            <td>
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': lab.estado === 'disponible',
+                  'bg-warning text-dark': lab.estado === 'mantenimiento'
+                }"
+              >
+                {{ lab.estado }}
+              </span>
+            </td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-primary"
+                 [routerLink]="['/laboratorios', lab.id]">
+                Ver
+              </a>
+              <a class="btn btn-sm btn-outline-secondary ms-1"
+                 [routerLink]="['/laboratorios', lab.id, 'editar']">
+                Editar
+              </a>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center text-secondary">
+              No hay laboratorios registrados.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+>>>>>>> b0999aeb0886159fea736da4b63af67227a147ce
