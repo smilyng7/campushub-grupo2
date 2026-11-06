@@ -1,62 +1,82 @@
 
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
-import {
-  LaboratorioService,
-  Laboratorio
-} from '../../services/laboratorio.service';
+import { CatalogoService } from '../../services/catalogo.service';
+import { Laboratorio } from '../../models/laboratorio';
 
 @Component({
   selector: 'app-laboratorio-lista',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './laboratorio-lista.html',
-  styleUrl: './laboratorio-lista.css',
+  styleUrl: './laboratorio-lista.css'
 })
 export class LaboratorioLista implements OnInit {
 
+  private readonly catalogo = inject(CatalogoService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   laboratorios: Laboratorio[] = [];
+  cargando = false;
   error = '';
 
-  constructor(
-    private laboratorioService: LaboratorioService
-  ) {}
-
   ngOnInit(): void {
+    console.log('Componente LaboratorioLista iniciado');
     this.cargarLaboratorios();
   }
 
   cargarLaboratorios(): void {
-    this.laboratorioService.obtenerLaboratorios().subscribe({
-      next: (data) => {
-        this.laboratorios = data;
-        this.error = '';
+
+    this.cargando = true;
+    this.error = '';
+
+    this.catalogo.getLaboratorios().subscribe({
+
+      next: (datos) => {
+        console.log('Laboratorios recibidos:', datos);
+
+        this.laboratorios = datos;
+        this.cargando = false;
+
+        this.cdr.detectChanges();
       },
+
       error: (err) => {
-        console.error(err);
+        console.error('Error API:', err);
+
         this.error = 'No se pudieron cargar los laboratorios.';
+        this.cargando = false;
+
+        this.cdr.detectChanges();
       }
+
     });
   }
 
-  eliminar(id: number): void {
-    const confirmar = confirm(
-      '¿Estás seguro de eliminar este laboratorio?'
-    );
+  eliminarLaboratorio(id: number): void {
 
-    if (confirmar) {
-      this.laboratorioService.eliminarLaboratorio(id).subscribe({
-        next: () => {
-          alert('Laboratorio eliminado correctamente.');
-          this.cargarLaboratorios();
-        },
-        error: (err) => {
-          console.error(err);
-          alert('No se pudo eliminar el laboratorio.');
-        }
-      });
+    if (!confirm('¿Deseas eliminar este laboratorio?')) {
+      return;
     }
+
+    this.catalogo.eliminarLaboratorio(id).subscribe({
+
+      next: () => {
+        this.laboratorios = this.laboratorios.filter(
+          lab => lab.id !== id
+        );
+
+        alert('Laboratorio eliminado correctamente.');
+        this.cdr.detectChanges();
+      },
+
+      error: (err) => {
+        console.error('Error al eliminar:', err);
+        alert('No se pudo eliminar el laboratorio.');
+      }
+
+    });
   }
 }

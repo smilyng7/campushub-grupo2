@@ -1,25 +1,31 @@
 
-<div class="container-fluid px-0">
+<div class="container py-4">
 
-  <div class="encabezado">
-    <div>
-      <p class="eyebrow mb-2">RECURSOS DEL CAMPUS</p>
-      <h2 class="fw-bold mb-2">Laboratorios</h2>
-      <p class="text-secondary mb-0">Administra los espacios y equipos de tu universidad.</p>
+  <h2>Lista de Laboratorios</h2>
+  <p>Administra los laboratorios del campus.</p>
+
+  @if (cargando) {
+    <div class="alert alert-info">
+      Cargando laboratorios...
+    </div>
+  }
+
+  @if (error) {
+    <div class="alert alert-danger">
+      {{ error }}
+    </div>
+  }
+
+  @if (!cargando && !error) {
+
+    <div class="mb-3">
+      <a routerLink="/laboratorios/nuevo" class="btn btn-primary">
+        + Nuevo laboratorio
+      </a>
     </div>
 
-    <button class="btn btn-primary" routerLink="/laboratorios/nuevo">
-      <span aria-hidden="true">+</span> Nuevo laboratorio
-    </button>
-  </div>
-
-  <div *ngIf="error" class="alert alert-danger">
-    {{ error }}
-  </div>
-
-  <div class="card border-0 shadow-sm">
     <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
+      <table class="table table-hover">
         <thead>
           <tr>
             <th>ID</th>
@@ -33,44 +39,39 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let laboratorio of laboratorios">
-            <td class="text-secondary">#{{ laboratorio.id }}</td>
-            <td class="fw-semibold">{{ laboratorio.nombre }}</td>
-            <td>{{ laboratorio.sede }}</td>
-            <td>{{ laboratorio.capacidad }} personas</td>
-            <td class="equipos-cell">{{ laboratorio.equipos.join(', ') }}</td>
-
-            <td>
-              <span class="badge rounded-pill"
-                    [class.text-bg-success]="laboratorio.estado === 'disponible'"
-                    [class.text-bg-danger]="laboratorio.estado === 'mantenimiento'">
-                {{ laboratorio.estado }}
-              </span>
-            </td>
-
-            <td class="acciones">
-              <div class="d-flex flex-wrap gap-2">
-                <button class="btn btn-sm btn-outline-dark" [routerLink]="['/laboratorios', laboratorio.id]">
-                  Ver
-                </button>
-                <button class="btn btn-sm btn-outline-primary" [routerLink]="['/laboratorios', laboratorio.id, 'editar']">
-                  Editar
-                </button>
-                <button
-                  class="btn btn-sm btn-outline-danger"
-                  (click)="laboratorio.id !== undefined && eliminar(laboratorio.id)">
+          @for (lab of laboratorios; track lab.id) {
+            <tr>
+              <td>{{ lab.id }}</td>
+              <td>{{ lab.nombre }}</td>
+              <td>{{ lab.sede }}</td>
+              <td>{{ lab.capacidad }}</td>
+              <td>{{ lab.equipos.join(', ') }}</td>
+              <td>
+                <span class="badge"
+                  [ngClass]="{
+                    'bg-success': lab.estado === 'disponible',
+                    'bg-danger': lab.estado === 'mantenimiento'
+                  }">
+                  {{ lab.estado }}
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-danger btn-sm"
+                  (click)="eliminarLaboratorio(lab.id!)">
                   Eliminar
                 </button>
-              </div>
-            </td>
-          </tr>
-
-          <tr *ngIf="laboratorios.length === 0 && !error">
-            <td colspan="7" class="py-5 text-center text-secondary">No hay laboratorios registrados.</td>
-          </tr>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="text-center">
+                No hay laboratorios registrados.
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
-  </div>
+  }
 
 </div>
