@@ -5,13 +5,13 @@
 
 .main-container {
   width: 100%;
-  max-width: 1500px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 35px 40px;
+  padding: 36px 40px 48px;
 }
 
 @media (max-width: 768px) {
   .main-container {
-    padding: 20px 15px;
+    padding: 24px 16px 36px;
   }
 }

@@ -1,14 +1,15 @@
 
-<div class="contenedor">
+<div class="container-fluid px-0">
 
   <div class="encabezado">
     <div>
-      <h2>Lista de Laboratorios</h2>
-      <p>Administra los laboratorios del campus.</p>
+      <p class="eyebrow mb-2">RECURSOS DEL CAMPUS</p>
+      <h2 class="fw-bold mb-2">Laboratorios</h2>
+      <p class="text-secondary mb-0">Administra los espacios y equipos de tu universidad.</p>
     </div>
 
-    <button class="btn-nuevo" routerLink="/laboratorios/nuevo">
-      + Nuevo laboratorio
+    <button class="btn btn-primary" routerLink="/laboratorios/nuevo">
+      <span aria-hidden="true">+</span> Nuevo laboratorio
     </button>
   </div>
 
@@ -16,55 +17,60 @@
     {{ error }}
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Sede</th>
-        <th>Capacidad</th>
-        <th>Equipos</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Sede</th>
+            <th>Capacidad</th>
+            <th>Equipos</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
 
-    <tbody>
-      <tr *ngFor="let laboratorio of laboratorios">
-        <td>{{ laboratorio.id }}</td>
-        <td>{{ laboratorio.nombre }}</td>
-        <td>{{ laboratorio.sede }}</td>
-        <td>{{ laboratorio.capacidad }}</td>
-        <td>{{ laboratorio.equipos.join(', ') }}</td>
+        <tbody>
+          <tr *ngFor="let laboratorio of laboratorios">
+            <td class="text-secondary">#{{ laboratorio.id }}</td>
+            <td class="fw-semibold">{{ laboratorio.nombre }}</td>
+            <td>{{ laboratorio.sede }}</td>
+            <td>{{ laboratorio.capacidad }} personas</td>
+            <td class="equipos-cell">{{ laboratorio.equipos.join(', ') }}</td>
 
-        <td>
-          <span [class.activo]="laboratorio.estado === 'disponible'"
-                [class.inactivo]="laboratorio.estado === 'mantenimiento'">
-            {{ laboratorio.estado }}
-          </span>
-        </td>
+            <td>
+              <span class="badge rounded-pill"
+                    [class.text-bg-success]="laboratorio.estado === 'disponible'"
+                    [class.text-bg-danger]="laboratorio.estado === 'mantenimiento'">
+                {{ laboratorio.estado }}
+              </span>
+            </td>
 
-        <td class="acciones">
-          <button [routerLink]="['/laboratorios', laboratorio.id]">
-            Ver
-          </button>
+            <td class="acciones">
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-outline-dark" [routerLink]="['/laboratorios', laboratorio.id]">
+                  Ver
+                </button>
+                <button class="btn btn-sm btn-outline-primary" [routerLink]="['/laboratorios', laboratorio.id, 'editar']">
+                  Editar
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="laboratorio.id !== undefined && eliminar(laboratorio.id)">
+                  Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>
 
-          <button [routerLink]="['/laboratorios', laboratorio.id, 'editar']">
-            Editar
-          </button>
-
-          <button
-            class="btn-eliminar"
-            (click)="laboratorio.id !== undefined && eliminar(laboratorio.id)">
-            Eliminar
-          </button>
-        </td>
-      </tr>
-
-      <tr *ngIf="laboratorios.length === 0 && !error">
-        <td colspan="7">No hay laboratorios registrados.</td>
-      </tr>
-    </tbody>
-  </table>
+          <tr *ngIf="laboratorios.length === 0 && !error">
+            <td colspan="7" class="py-5 text-center text-secondary">No hay laboratorios registrados.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
 </div>

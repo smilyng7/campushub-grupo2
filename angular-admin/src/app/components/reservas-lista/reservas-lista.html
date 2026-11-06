@@ -1,53 +1,57 @@
 <div class="container py-4">
-  <h2 class="mb-3">Reservas</h2>
+  <p class="eyebrow mb-2">GESTIÓN ACADÉMICA</p>
+  <h2 class="fw-bold mb-2">Reservas</h2>
+  <p class="text-secondary mb-4">Consulta las solicitudes de uso de los espacios universitarios.</p>
 
   @if (error) {
     <div class="alert alert-danger">{{ error }}</div>
   }
 
-  <div class="table-responsive">
-    <table class="table table-hover align-middle">
-      <thead>
-        <tr>
-          <th>Código</th>
-          <th>Laboratorio</th>
-          <th>Usuario</th>
-          <th>Fecha</th>
-          <th>Horario</th>
-          <th>Motivo</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (reserva of reservas; track reserva.id) {
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
           <tr>
-            <td>{{ reserva.codigo }}</td>
-            <td>#{{ reserva.laboratorioId }}</td>
-            <td>#{{ reserva.usuarioId }}</td>
-            <td>{{ reserva.fecha }}</td>
-            <td>{{ reserva.horaInicio }}–{{ reserva.horaFin }}</td>
-            <td>{{ reserva.motivo }}</td>
-            <td>
-              <span
-                class="badge"
-                [ngClass]="{
-                  'bg-success': reserva.estado === 'aprobada',
-                  'bg-warning text-dark': reserva.estado === 'pendiente',
-                  'bg-danger': reserva.estado === 'rechazada'
-                }"
-              >
-                {{ reserva.estado }}
-              </span>
-            </td>
+            <th>Código</th>
+            <th>Laboratorio</th>
+            <th>Usuario</th>
+            <th>Fecha</th>
+            <th>Horario</th>
+            <th>Motivo</th>
+            <th>Estado</th>
           </tr>
-        } @empty {
-          <tr>
-            <td colspan="7" class="text-center text-secondary">
-              No hay reservas registradas.
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (reserva of reservas; track reserva.id) {
+            <tr>
+              <td class="fw-semibold">{{ reserva.codigo }}</td>
+              <td>#{{ reserva.laboratorioId }}</td>
+              <td>#{{ reserva.usuarioId }}</td>
+              <td>{{ reserva.fecha }}</td>
+              <td>{{ reserva.horaInicio }}–{{ reserva.horaFin }}</td>
+              <td>{{ reserva.motivo }}</td>
+              <td>
+                <span
+                  class="badge rounded-pill"
+                  [ngClass]="{
+                    'text-bg-success': reserva.estado === 'aprobada',
+                    'text-bg-warning': reserva.estado === 'pendiente',
+                    'text-bg-danger': reserva.estado === 'rechazada'
+                  }"
+                >
+                  {{ reserva.estado }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="py-5 text-center text-secondary">
+                No hay reservas registradas.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

@@ -8,12 +8,13 @@
   border-radius: 16px;
   min-height: 145px;
   transition: all 0.25s ease;
-  background: #ffffff;
+  background: var(--campus-surface);
+  border-top: 3px solid var(--campus-red);
 }
 
 .dashboard-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(23, 23, 25, 0.1) !important;
 }
 
 .dashboard-card .card-body {
@@ -44,7 +45,7 @@
 .progress {
   height: 9px;
   border-radius: 20px;
-  background-color: #e9edf5;
+  background-color: #ece9e9;
 }
 
 .progress-bar {

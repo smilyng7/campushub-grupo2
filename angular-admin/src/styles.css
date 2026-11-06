@@ -1,9 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-@import "bootstrap/dist/css/bootstrap.min.css";
-
 * {
   box-sizing: border-box;
+}
+
+:root {
+  --bs-primary: #a30d25;
+  --bs-primary-rgb: 163, 13, 37;
+  --bs-link-color: #a30d25;
+  --bs-link-hover-color: #76091b;
+  --campus-red: #a30d25;
+  --campus-red-dark: #76091b;
+  --campus-ink: #171719;
+  --campus-muted: #68686f;
+  --campus-border: #e7e5e5;
+  --campus-surface: #ffffff;
+  --campus-background: #f5f4f3;
 }
 
 html, body {
@@ -14,18 +26,66 @@ html, body {
 
 body {
   font-family: 'Inter', Arial, sans-serif;
-  background: #f4f6fa;
-  color: #1e293b;
+  background: var(--campus-background);
+  color: var(--campus-ink);
 }
 
 button, input, select, textarea {
   font-family: inherit;
 }
 
+a {
+  color: var(--campus-red);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--campus-red);
+  --bs-btn-border-color: var(--campus-red);
+  --bs-btn-hover-bg: var(--campus-red-dark);
+  --bs-btn-hover-border-color: var(--campus-red-dark);
+  --bs-btn-active-bg: var(--campus-red-dark);
+  --bs-btn-active-border-color: var(--campus-red-dark);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--campus-red);
+  --bs-btn-border-color: var(--campus-red);
+  --bs-btn-hover-bg: var(--campus-red);
+  --bs-btn-hover-border-color: var(--campus-red);
+  --bs-btn-active-bg: var(--campus-red-dark);
+  --bs-btn-active-border-color: var(--campus-red-dark);
+}
+
 .card {
+  border: 1px solid var(--campus-border);
   border-radius: 14px;
 }
 
 h2, h3, h4, h5 {
-  color: #172554;
+  color: var(--campus-ink);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: rgba(var(--bs-primary-rgb), 0.55);
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.15);
+}
+
+.table thead th {
+  background: var(--campus-ink);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.table > :not(caption) > * > * {
+  padding: 0.9rem 1rem;
+  border-bottom-color: var(--campus-border);
+}
+
+.table tbody tr:last-child > * {
+  border-bottom: 0;
 }

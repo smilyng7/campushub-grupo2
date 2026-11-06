@@ -1,17 +1,63 @@
 .navbar {
-  min-height: 68px;
+  min-height: 78px;
+  background: #171719;
+  border-bottom: 4px solid var(--campus-red);
 }
 
 .navbar-brand {
-  font-size: 1.4rem;
-  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.25rem;
+  letter-spacing: 0.01em;
+}
+
+.brand-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  font-family: Georgia, serif;
+  font-size: 1.35rem;
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.brand-caption {
+  margin-top: 4px;
+  color: #d4d0d0;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
 }
 
 .nav-link {
   font-weight: 500;
+  color: #d7d4d4;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #fff;
 }
 
 .nav-link.active {
-  color: white !important;
-  border-bottom: 2px solid white;
+  color: #fff !important;
+  border-bottom: 2px solid #e34b60;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-nav {
+    padding: 12px 0 4px;
+  }
+
+  .nav-link.active {
+    display: inline-block;
+  }
 }
