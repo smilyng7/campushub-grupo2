@@ -1,9 +1,25 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { CatalogoService } from '../../services/catalogo.service';
+import { Reserva } from '../../models/reserva';
 
 @Component({
-  imports: [],
   selector: 'app-reservas-lista',
-  styleUrl: './reservas-lista.css',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './reservas-lista.html',
+  styleUrl: './reservas-lista.css',
 })
-export class ReservasLista {}
+export class ReservasLista implements OnInit {
+  private readonly catalogo = inject(CatalogoService);
+
+  reservas: Reserva[] = [];
+  error = '';
+
+  ngOnInit(): void {
+    this.catalogo.getReservas().subscribe({
+      next: (datos) => (this.reservas = datos),
+      error: () => (this.error = 'No se pudieron cargar las reservas.'),
+    });
+  }
+}
