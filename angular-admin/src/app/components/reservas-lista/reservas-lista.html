@@ -8,22 +8,22 @@
     </p>
   </div>
 
-  @if (cargando) {
+  @if (cargando()) {
   <div class="alert alert-info">
     Cargando reservas...
   </div>
   }
 
-  @if (error) {
+  @if (error()) {
   <div class="alert alert-danger">
-    {{ error }}
+    {{ error() }}
     <button class="btn btn-sm btn-outline-danger ms-3" (click)="cargarReservas()">
       Reintentar
     </button>
   </div>
   }
 
-  @if (!cargando && !error) {
+  @if (!cargando() && !error()) {
 
   <div class="table-responsive">
 
@@ -44,7 +44,7 @@
 
       <tbody>
 
-        @for (reserva of reservas; track reserva.id) {
+        @for (reserva of reservas(); track reserva.id) {
 
         <tr>
 
@@ -112,7 +112,7 @@
   </div>
 
   <div class="text-secondary mt-3">
-    Total de reservas: {{ reservas.length }}
+    Total de reservas: {{ reservas().length }}
   </div>
 
   }

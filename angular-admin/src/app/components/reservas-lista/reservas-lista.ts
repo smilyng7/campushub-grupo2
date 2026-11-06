@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReservaService } from '../../services/reserva.service';
 import { Reserva } from '../../models/reserva';
@@ -11,39 +11,39 @@ import { Reserva } from '../../models/reserva';
   styleUrls: ['./reservas-lista.css']
 })
 export class ReservasLista implements OnInit {
-  reservas: Reserva[] = [];
-  cargando = true;
-  error = '';
+  private readonly reservaService = inject(ReservaService);
 
-  constructor(private reservaService: ReservaService) { }
+  reservas = signal<Reserva[]>([]);
+  cargando = signal<boolean>(true);
+  error = signal<string>('');
 
   ngOnInit(): void {
     this.cargarReservas();
   }
 
-  // Cargar lista de reservas desde el backend simulado
   cargarReservas(): void {
-    this.cargando = true;
+    this.cargando.set(true);
+    this.error.set('');
+
     this.reservaService.obtenerReservas().subscribe({
       next: (datos) => {
-        this.reservas = datos;
-        this.cargando = false;
+        this.reservas.set(datos);
+        this.cargando.set(false);
       },
       error: (err) => {
         console.error('Error al cargar reservas:', err);
-        this.error = 'No se pudieron cargar las reservas.';
-        this.cargando = false;
+        this.error.set('No se pudieron cargar las reservas.');
+        this.cargando.set(false);
       }
     });
   }
 
-  // Eliminar reserva mediante el método DELETE
   eliminar(id?: number): void {
     if (!id) return;
     if (confirm('¿Estás segura de eliminar esta reserva?')) {
       this.reservaService.eliminarReserva(id).subscribe({
         next: () => {
-          this.reservas = this.reservas.filter(r => r.id !== id);
+          this.reservas.update(lista => lista.filter(r => r.id !== id));
         },
         error: (err) => console.error('Error al eliminar reserva:', err)
       });
