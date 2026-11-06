@@ -1,0 +1,83 @@
+
+.contenedor {
+  padding: 25px;
+}
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+h2 {
+  color: #263b59;
+  margin-bottom: 5px;
+}
+
+p {
+  color: #777;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+th {
+  background: #263b59;
+  color: white;
+}
+
+.activo {
+  background: #dcfce7;
+  color: #15803d;
+  padding: 5px 12px;
+  border-radius: 15px;
+}
+
+.inactivo {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 5px 12px;
+  border-radius: 15px;
+}
+
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.btn-nuevo {
+  background: #2563eb;
+  color: white;
+  padding: 12px 18px;
+}
+
+.acciones button {
+  background: #e5e7eb;
+  color: #263b59;
+}
+
+
+.btn-eliminar {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.btn-eliminar:hover {
+  background: #fecaca;
+}
+

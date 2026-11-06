@@ -1,1 +1,60 @@
-<p>laboratorio-lista works!</p>
+
+<div class="contenedor">
+
+  <div class="encabezado">
+    <div>
+      <h2>Lista de Laboratorios</h2>
+      <p>Administra los laboratorios del campus.</p>
+    </div>
+
+    <button class="btn-nuevo" routerLink="/laboratorios/nuevo">
+      + Nuevo laboratorio
+    </button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Dirección</th>
+        <th>Teléfono</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let laboratorio of laboratorios">
+        <td>{{ laboratorio.id }}</td>
+        <td>{{ laboratorio.nombre }}</td>
+        <td>{{ laboratorio.direccion }}</td>
+        <td>{{ laboratorio.telefono }}</td>
+        <td>
+          <span [class.activo]="laboratorio.estado === 'Activo'"
+                [class.inactivo]="laboratorio.estado === 'Inactivo'">
+            {{ laboratorio.estado }}
+          </span>
+        </td>
+
+<td class="acciones">
+  <button [routerLink]="['/laboratorios', laboratorio.id]">
+    Ver
+  </button>
+
+  <button [routerLink]="['/laboratorios', laboratorio.id, 'editar']">
+    Editar
+  </button>
+
+  <button
+  class="btn-eliminar"
+  (click)="laboratorio.id !== undefined && eliminar(laboratorio.id)">
+    Eliminar
+  </button>
+</td>
+
+      </tr>
+    </tbody>
+  </table>
+
+</div>

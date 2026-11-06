@@ -1,1 +1,56 @@
-<p>laboratorio-formulario works!</p>
+
+<div class="formulario-container">
+
+  <h2>Registrar Laboratorio</h2>
+  <p>Completa los datos del nuevo laboratorio.</p>
+
+  <form (ngSubmit)="guardar()">
+
+    <label>Nombre del laboratorio</label>
+    <input
+      type="text"
+      name="nombre"
+      [(ngModel)]="laboratorio.nombre"
+      placeholder="Ingrese el nombre"
+      required
+    >
+
+    <label>Dirección</label>
+    <input
+      type="text"
+      name="direccion"
+      [(ngModel)]="laboratorio.direccion"
+      placeholder="Ingrese la dirección"
+      required
+    >
+
+    <label>Teléfono</label>
+    <input
+      type="tel"
+      name="telefono"
+      [(ngModel)]="laboratorio.telefono"
+      placeholder="Ingrese el teléfono"
+      required
+    >
+
+    <label>Estado</label>
+    <select
+      name="estado"
+      [(ngModel)]="laboratorio.estado"
+    >
+      <option value="Activo">Activo</option>
+      <option value="Inactivo">Inactivo</option>
+    </select>
+
+    <div class="botones">
+      <button type="submit" class="guardar">
+        Guardar laboratorio
+      </button>
+
+      <button type="button" class="cancelar" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
+
+  </form>
+</div>
