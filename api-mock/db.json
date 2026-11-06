@@ -1,171 +1,399 @@
 {
-  "usuarios": [
-    {
-      "id": 1,
-      "nombre": "Ana Torres",
-      "correo": "admin1@utp.edu.pe",
-      "codigo": "A00000001",
-      "rol": "admin",
-      "password": "admin123"
-    },
-    {
-      "id": 2,
-      "nombre": "Carlos Pérez",
-      "correo": "admin2@utp.edu.pe",
-      "codigo": "A00000002",
-      "rol": "admin",
-      "password": "admin123"
-    },
-    {
-      "id": 3,
-      "nombre": "Luis Quispe",
-      "correo": "u20231234@utp.edu.pe",
-      "codigo": "U20231234",
-      "rol": "estudiante",
-      "password": "est123"
-    },
-    {
-      "id": 4,
-      "nombre": "Maria Gomez",
-      "correo": "u20235678@utp.edu.pe",
-      "codigo": "U20235678",
-      "rol": "estudiante",
-      "password": "est123"
-    },
-    {
-      "id": 5,
-      "nombre": "Jorge Ruiz",
-      "correo": "u20239012@utp.edu.pe",
-      "codigo": "U20239012",
-      "rol": "estudiante",
-      "password": "est123"
-    },
-    {
-      "id": 6,
-      "nombre": "Sofia Ramos",
-      "correo": "u20233456@utp.edu.pe",
-      "codigo": "U20233456",
-      "rol": "estudiante",
-      "password": "est123"
-    },
-    {
-      "id": 7,
-      "nombre": "Pedro Castillo",
-      "correo": "u20237890@utp.edu.pe",
-      "codigo": "U20237890",
-      "rol": "estudiante",
-      "password": "est123"
-    },
-    {
-      "id": 8,
-      "nombre": "Lucia Mendez",
-      "correo": "u20231122@utp.edu.pe",
-      "codigo": "U20231122",
-      "rol": "estudiante",
-      "password": "est123"
-    }
-  ],
-  "laboratorios": [
-    {
-      "id": 1,
-      "nombre": "Lab A-301",
-      "sede": "Lima Centro",
-      "capacidad": 30,
-      "equipos": [
-        "PC i7",
-        "Proyector"
-      ],
-      "estado": "disponible"
-    },
-    {
-      "id": 2,
-      "nombre": "Lab B-205",
-      "sede": "Lima Sur",
-      "capacidad": 24,
-      "equipos": [
-        "PC i5",
-        "Arduino"
-      ],
-      "estado": "mantenimiento"
-    },
-    {
-      "id": 3,
-      "nombre": "Lab C-102",
-      "sede": "Lima Norte",
-      "capacidad": 40,
-      "equipos": [
-        "MacBook",
-        "Apple TV"
-      ],
-      "estado": "disponible"
-    },
-    {
-      "id": 4,
-      "nombre": "Lab D-404",
-      "sede": "Lima Centro",
-      "capacidad": 20,
-      "equipos": [
-        "PC i7",
-        "Tablets"
-      ],
-      "estado": "disponible"
-    },
-    {
-      "id": 5,
-      "nombre": "Lab E-501",
-      "sede": "Lima Este",
-      "capacidad": 35,
-      "equipos": [
-        "PCs Ryzen",
-        "Proyector"
-      ],
-      "estado": "disponible"
-    },
-    {
-      "id": 6,
-      "nombre": "Lab F-202",
-      "sede": "Lima Sur",
-      "capacidad": 25,
-      "equipos": [
-        "PCs i5"
-      ],
-      "estado": "mantenimiento"
-    },
-    {
-      "id": 7,
-      "nombre": "Lab G-303",
-      "sede": "Lima Norte",
-      "capacidad": 30,
-      "equipos": [
-        "Impresora 3D",
-        "PCs i7"
-      ],
-      "estado": "disponible"
-    },
-    {
-      "id": 8,
-      "nombre": "Lab H-101",
-      "sede": "Lima Este",
-      "capacidad": 50,
-      "equipos": [
-        "Auditorios",
-        "Pantallas LED"
-      ],
-      "estado": "disponible"
-    }
-  ],
-  "reservas": [
-    {
-      "id": 1,
-      "codigo": "RES-0001",
-      "laboratorioId": 1,
-      "usuarioId": 3,
-      "fecha": "2026-11-20",
-      "horaInicio": "08:00",
-      "horaFin": "10:00",
-      "motivo": "Práctica de React",
-      "estado": "aprobada",
-      "creadoEn": "2026-11-15T10:00:00Z"
-    }
-  ]
+    "usuarios": [
+        {
+            "id": 1,
+            "nombre": "Ana Torres",
+            "correo": "admin1@utp.edu.pe",
+            "codigo": "A00000001",
+            "rol": "admin",
+            "password": "admin123"
+        },
+        {
+            "id": 2,
+            "nombre": "Carlos Pérez",
+            "correo": "admin2@utp.edu.pe",
+            "codigo": "A00000002",
+            "rol": "admin",
+            "password": "admin123"
+        },
+        {
+            "id": 3,
+            "nombre": "Luis Quispe",
+            "correo": "u20231234@utp.edu.pe",
+            "codigo": "U20231234",
+            "rol": "estudiante",
+            "password": "est123"
+        },
+        {
+            "id": 4,
+            "nombre": "Maria Gomez",
+            "correo": "u20235678@utp.edu.pe",
+            "codigo": "U20235678",
+            "rol": "estudiante",
+            "password": "est123"
+        },
+        {
+            "id": 5,
+            "nombre": "Jorge Ruiz",
+            "correo": "u20239012@utp.edu.pe",
+            "codigo": "U20239012",
+            "rol": "estudiante",
+            "password": "est123"
+        },
+        {
+            "id": 6,
+            "nombre": "Sofia Ramos",
+            "correo": "u20233456@utp.edu.pe",
+            "codigo": "U20233456",
+            "rol": "estudiante",
+            "password": "est123"
+        },
+        {
+            "id": 7,
+            "nombre": "Pedro Castillo",
+            "correo": "u20237890@utp.edu.pe",
+            "codigo": "U20237890",
+            "rol": "estudiante",
+            "password": "est123"
+        },
+        {
+            "id": 8,
+            "nombre": "Lucia Mendez",
+            "correo": "u20231122@utp.edu.pe",
+            "codigo": "U20231122",
+            "rol": "estudiante",
+            "password": "est123"
+        }
+    ],
+    "laboratorios": [
+        {
+            "id": 1,
+            "nombre": "Lab A-301",
+            "sede": "Lima Centro",
+            "capacidad": 30,
+            "equipos": [
+                "PC i7",
+                "Proyector"
+            ],
+            "estado": "disponible"
+        },
+        {
+            "id": 2,
+            "nombre": "Lab B-205",
+            "sede": "Lima Sur",
+            "capacidad": 24,
+            "equipos": [
+                "PC i5",
+                "Arduino"
+            ],
+            "estado": "mantenimiento"
+        },
+        {
+            "id": 3,
+            "nombre": "Lab C-102",
+            "sede": "Lima Norte",
+            "capacidad": 40,
+            "equipos": [
+                "MacBook",
+                "Apple TV"
+            ],
+            "estado": "disponible"
+        },
+        {
+            "id": 4,
+            "nombre": "Lab D-404",
+            "sede": "Lima Centro",
+            "capacidad": 20,
+            "equipos": [
+                "PC i7",
+                "Tablets"
+            ],
+            "estado": "disponible"
+        },
+        {
+            "id": 5,
+            "nombre": "Lab E-501",
+            "sede": "Lima Este",
+            "capacidad": 35,
+            "equipos": [
+                "PCs Ryzen",
+                "Proyector"
+            ],
+            "estado": "disponible"
+        },
+        {
+            "id": 6,
+            "nombre": "Lab F-202",
+            "sede": "Lima Sur",
+            "capacidad": 25,
+            "equipos": [
+                "PCs i5"
+            ],
+            "estado": "mantenimiento"
+        },
+        {
+            "id": 7,
+            "nombre": "Lab G-303",
+            "sede": "Lima Norte",
+            "capacidad": 30,
+            "equipos": [
+                "Impresora 3D",
+                "PCs i7"
+            ],
+            "estado": "disponible"
+        },
+        {
+            "id": 8,
+            "nombre": "Lab H-101",
+            "sede": "Lima Este",
+            "capacidad": 50,
+            "equipos": [
+                "Auditorios",
+                "Pantallas LED"
+            ],
+            "estado": "disponible"
+        }
+    ],
+    "reservas": [
+        {
+            "id": 1,
+            "codigo": "RES-0001",
+            "laboratorioId": 1,
+            "usuarioId": 3,
+            "fecha": "2026-11-20",
+            "horaInicio": "08:00",
+            "horaFin": "10:00",
+            "motivo": "Práctica de React",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-15T10:00:00Z"
+        },
+        {
+            "id": 2,
+            "codigo": "RES-0002",
+            "laboratorioId": 2,
+            "usuarioId": 4,
+            "fecha": "2026-11-21",
+            "horaInicio": "10:00",
+            "horaFin": "12:00",
+            "motivo": "Examen Parcial",
+            "estado": "pendiente",
+            "creadoEn": "2026-11-15T11:00:00Z"
+        },
+        {
+            "id": 3,
+            "codigo": "RES-0003",
+            "laboratorioId": 3,
+            "usuarioId": 5,
+            "fecha": "2026-11-22",
+            "horaInicio": "14:00",
+            "horaFin": "16:00",
+            "motivo": "Taller Java",
+            "estado": "rechazada",
+            "creadoEn": "2026-11-15T12:00:00Z"
+        },
+        {
+            "id": 4,
+            "codigo": "RES-0004",
+            "laboratorioId": 4,
+            "usuarioId": 6,
+            "fecha": "2026-11-23",
+            "horaInicio": "16:00",
+            "horaFin": "18:00",
+            "motivo": "Investigación",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-16T09:00:00Z"
+        },
+        {
+            "id": 5,
+            "codigo": "RES-0005",
+            "laboratorioId": 5,
+            "usuarioId": 7,
+            "fecha": "2026-11-24",
+            "horaInicio": "08:00",
+            "horaFin": "10:00",
+            "motivo": "Pruebas QA",
+            "estado": "pendiente",
+            "creadoEn": "2026-11-16T10:00:00Z"
+        },
+        {
+            "id": 6,
+            "codigo": "RES-0006",
+            "laboratorioId": 6,
+            "usuarioId": 8,
+            "fecha": "2026-11-25",
+            "horaInicio": "10:00",
+            "horaFin": "12:00",
+            "motivo": "Desarrollo Web",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-16T11:00:00Z"
+        },
+        {
+            "id": 7,
+            "codigo": "RES-0007",
+            "laboratorioId": 7,
+            "usuarioId": 3,
+            "fecha": "2026-11-26",
+            "horaInicio": "12:00",
+            "horaFin": "14:00",
+            "motivo": "Redes",
+            "estado": "rechazada",
+            "creadoEn": "2026-11-16T12:00:00Z"
+        },
+        {
+            "id": 8,
+            "codigo": "RES-0008",
+            "laboratorioId": 8,
+            "usuarioId": 4,
+            "fecha": "2026-11-27",
+            "horaInicio": "14:00",
+            "horaFin": "16:00",
+            "motivo": "Base de Datos",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-17T08:00:00Z"
+        },
+        {
+            "id": 9,
+            "codigo": "RES-0009",
+            "laboratorioId": 1,
+            "usuarioId": 5,
+            "fecha": "2026-11-28",
+            "horaInicio": "16:00",
+            "horaFin": "18:00",
+            "motivo": "Seguridad",
+            "estado": "pendiente",
+            "creadoEn": "2026-11-17T09:00:00Z"
+        },
+        {
+            "id": 10,
+            "codigo": "RES-0010",
+            "laboratorioId": 2,
+            "usuarioId": 6,
+            "fecha": "2026-11-29",
+            "horaInicio": "08:00",
+            "horaFin": "10:00",
+            "motivo": "Sistemas Operativos",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-17T10:00:00Z"
+        },
+        {
+            "id": 11,
+            "codigo": "RES-0011",
+            "laboratorioId": 3,
+            "usuarioId": 7,
+            "fecha": "2026-11-30",
+            "horaInicio": "10:00",
+            "horaFin": "12:00",
+            "motivo": "Arquitectura",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-18T08:00:00Z"
+        },
+        {
+            "id": 12,
+            "codigo": "RES-0012",
+            "laboratorioId": 4,
+            "usuarioId": 8,
+            "fecha": "2026-12-01",
+            "horaInicio": "12:00",
+            "horaFin": "14:00",
+            "motivo": "IoT",
+            "estado": "pendiente",
+            "creadoEn": "2026-11-18T09:00:00Z"
+        },
+        {
+            "id": 13,
+            "codigo": "RES-0013",
+            "laboratorioId": 5,
+            "usuarioId": 3,
+            "fecha": "2026-12-02",
+            "horaInicio": "14:00",
+            "horaFin": "16:00",
+            "motivo": "Cloud Computing",
+            "estado": "rechazada",
+            "creadoEn": "2026-11-18T10:00:00Z"
+        },
+        {
+            "id": 14,
+            "codigo": "RES-0014",
+            "laboratorioId": 6,
+            "usuarioId": 4,
+            "fecha": "2026-12-03",
+            "horaInicio": "16:00",
+            "horaFin": "18:00",
+            "motivo": "Machine Learning",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-19T08:00:00Z"
+        },
+        {
+            "id": 15,
+            "codigo": "RES-0015",
+            "laboratorioId": 7,
+            "usuarioId": 5,
+            "fecha": "2026-12-04",
+            "horaInicio": "08:00",
+            "horaFin": "10:00",
+            "motivo": "Estructuras",
+            "estado": "pendiente",
+            "creadoEn": "2026-11-19T09:00:00Z"
+        },
+        {
+            "id": 16,
+            "codigo": "RES-0016",
+            "laboratorioId": 8,
+            "usuarioId": 6,
+            "fecha": "2026-12-05",
+            "horaInicio": "10:00",
+            "horaFin": "12:00",
+            "motivo": "Algoritmos",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-19T10:00:00Z"
+        },
+        {
+            "id": 17,
+            "codigo": "RES-0017",
+            "laboratorioId": 1,
+            "usuarioId": 7,
+            "fecha": "2026-12-06",
+            "horaInicio": "12:00",
+            "horaFin": "14:00",
+            "motivo": "Compiladores",
+            "estado": "rechazada",
+            "creadoEn": "2026-11-20T08:00:00Z"
+        },
+        {
+            "id": 18,
+            "codigo": "RES-0018",
+            "laboratorioId": 2,
+            "usuarioId": 8,
+            "fecha": "2026-12-07",
+            "horaInicio": "14:00",
+            "horaFin": "16:00",
+            "motivo": "Grafica",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-20T09:00:00Z"
+        },
+        {
+            "id": 19,
+            "codigo": "RES-0019",
+            "laboratorioId": 3,
+            "usuarioId": 3,
+            "fecha": "2026-12-08",
+            "horaInicio": "16:00",
+            "horaFin": "18:00",
+            "motivo": "Tesis I",
+            "estado": "pendiente",
+            "creadoEn": "2026-11-20T10:00:00Z"
+        },
+        {
+            "id": 20,
+            "codigo": "RES-0020",
+            "laboratorioId": 4,
+            "usuarioId": 4,
+            "fecha": "2026-12-09",
+            "horaInicio": "08:00",
+            "horaFin": "10:00",
+            "motivo": "Proyecto Final",
+            "estado": "aprobada",
+            "creadoEn": "2026-11-20T11:00:00Z"
+        }
+    ]
 }
