@@ -34,6 +34,10 @@ export const routes: Routes = [
     component: LaboratorioFormulario
   },
   {
+    path: 'laboratorio/:id',
+    component: LaboratorioFormulario
+  },
+  {
     path: 'reservas',
     component: ReservasLista
   },
