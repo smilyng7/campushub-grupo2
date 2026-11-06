@@ -1,13 +1,10 @@
-
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import {
-  LaboratorioService,
-  Laboratorio
-} from '../../services/laboratorio.service';
+import { CatalogoService } from '../../services/catalogo.service';
+import { Laboratorio } from '../../models/laboratorio';
 
 @Component({
   selector: 'app-laboratorio-formulario',
@@ -18,6 +15,11 @@ import {
 })
 export class LaboratorioFormulario implements OnInit {
 
+  private readonly catalogo = inject(CatalogoService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   laboratorio: Laboratorio = {
     nombre: '',
     sede: '',
@@ -27,16 +29,8 @@ export class LaboratorioFormulario implements OnInit {
   };
 
   equiposTexto = '';
-
   editando = false;
   cargando = false;
-
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private laboratorioService: LaboratorioService,
-    private cdr: ChangeDetectorRef
-  ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -45,12 +39,12 @@ export class LaboratorioFormulario implements OnInit {
       this.editando = true;
       this.cargando = true;
 
-      this.laboratorioService
-        .obtenerLaboratorio(Number(id))
+      this.catalogo
+        .getLaboratorio(Number(id))
         .subscribe({
           next: (data) => {
             this.laboratorio = data;
-            this.equiposTexto = data.equipos.join(', ');
+            this.equiposTexto = data.equipos ? data.equipos.join(', ') : '';
             this.cargando = false;
             this.cdr.detectChanges();
           },
@@ -67,13 +61,14 @@ export class LaboratorioFormulario implements OnInit {
 
   actualizarEquipos(): void {
     this.laboratorio.equipos = this.equiposTexto
-      .split(',')
-      .map(e => e.trim())
-      .filter(e => e.length > 0);
+      ? this.equiposTexto
+          .split(',')
+          .map(e => e.trim())
+          .filter(e => e.length > 0)
+      : [];
   }
 
   guardar(): void {
-
     this.actualizarEquipos();
 
     if (
@@ -89,11 +84,11 @@ export class LaboratorioFormulario implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     const operacion = id
-      ? this.laboratorioService.actualizarLaboratorio(
+      ? this.catalogo.actualizarLaboratorio(
           Number(id),
           this.laboratorio
         )
-      : this.laboratorioService.crearLaboratorio(
+      : this.catalogo.crearLaboratorio(
           this.laboratorio
         );
 
