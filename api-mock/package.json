@@ -1,17 +1,13 @@
+
 {
-  "name": "api-mock",
+  "name": "campushub-api-mock",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API Mock de CampusHub",
+  "main": "server.js",
   "scripts": {
-    "api": "json-server --watch db.json --port 3000",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {},
-  "devDependencies": {
-    "json-server": "0.17.4"
+  "dependencies": {
+    "json-server": "^0.17.4"
   }
 }

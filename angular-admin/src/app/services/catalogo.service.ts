@@ -17,3 +17,4 @@ export class CatalogoService {
     return this.http.get<Reserva[]>(`${this.api}/reservas`);
   }
 }
+

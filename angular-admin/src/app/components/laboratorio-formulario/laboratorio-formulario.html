@@ -1,56 +1,87 @@
 
 <div class="formulario-container">
 
-  <h2>Registrar Laboratorio</h2>
-  <p>Completa los datos del nuevo laboratorio.</p>
+  <h2>{{ editando ? 'Editar Laboratorio' : 'Registrar Laboratorio' }}</h2>
 
-  <form (ngSubmit)="guardar()">
+  <p>
+    {{ editando
+      ? 'Modifica los datos del laboratorio.'
+      : 'Completa los datos del nuevo laboratorio.' }}
+  </p>
+
+  <div *ngIf="cargando">
+    Cargando información del laboratorio...
+  </div>
+
+  <form *ngIf="!cargando" (ngSubmit)="guardar()">
 
     <label>Nombre del laboratorio</label>
     <input
       type="text"
       name="nombre"
       [(ngModel)]="laboratorio.nombre"
-      placeholder="Ingrese el nombre"
+      placeholder="Ejemplo: Lab A-301"
       required
     >
 
-    <label>Dirección</label>
+    <label>Sede</label>
     <input
       type="text"
-      name="direccion"
-      [(ngModel)]="laboratorio.direccion"
-      placeholder="Ingrese la dirección"
+      name="sede"
+      [(ngModel)]="laboratorio.sede"
+      placeholder="Ejemplo: Lima Centro"
       required
     >
 
-    <label>Teléfono</label>
+    <label>Capacidad</label>
     <input
-      type="tel"
-      name="telefono"
-      [(ngModel)]="laboratorio.telefono"
-      placeholder="Ingrese el teléfono"
+      type="number"
+      name="capacidad"
+      [(ngModel)]="laboratorio.capacidad"
+      min="1"
       required
     >
+
+    <label>Equipos</label>
+    <input
+      type="text"
+      name="equipos"
+      [(ngModel)]="equiposTexto"
+      placeholder="PC i7, Proyector, Arduino"
+    >
+
+    <small>Separa los equipos con comas.</small>
 
     <label>Estado</label>
     <select
       name="estado"
       [(ngModel)]="laboratorio.estado"
+      required
     >
-      <option value="Activo">Activo</option>
-      <option value="Inactivo">Inactivo</option>
+      <option value="disponible">Disponible</option>
+      <option value="mantenimiento">Mantenimiento</option>
     </select>
 
     <div class="botones">
-      <button type="submit" class="guardar">
-        Guardar laboratorio
+
+      <button
+        type="submit"
+        class="guardar"
+        [disabled]="cargando"
+      >
+        {{ editando ? 'Actualizar laboratorio' : 'Guardar laboratorio' }}
       </button>
 
-      <button type="button" class="cancelar" (click)="cancelar()">
+      <button
+        type="button"
+        class="cancelar"
+        (click)="cancelar()"
+      >
         Cancelar
       </button>
+
     </div>
 
   </form>
+
 </div>

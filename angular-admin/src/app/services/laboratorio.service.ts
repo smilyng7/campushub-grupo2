@@ -6,8 +6,9 @@ import { Observable } from 'rxjs';
 export interface Laboratorio {
   id?: number;
   nombre: string;
-  direccion: string;
-  telefono: string;
+  sede: string;
+  capacidad: number;
+  equipos: string[];
   estado: string;
 }
 
@@ -16,9 +17,9 @@ export interface Laboratorio {
 })
 export class LaboratorioService {
 
-  private apiUrl = 'http://localhost:3000/api/laboratorios';
+  private apiUrl = 'http://localhost:3000/laboratorios';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   obtenerLaboratorios(): Observable<Laboratorio[]> {
     return this.http.get<Laboratorio[]>(this.apiUrl);
@@ -42,7 +43,7 @@ export class LaboratorioService {
     );
   }
 
-  eliminarLaboratorio(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  eliminarLaboratorio(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

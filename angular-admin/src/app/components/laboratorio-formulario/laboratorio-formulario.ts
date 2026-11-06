@@ -1,5 +1,5 @@
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -16,14 +16,20 @@ import {
   templateUrl: './laboratorio-formulario.html',
   styleUrl: './laboratorio-formulario.css',
 })
-export class LaboratorioFormulario {
+export class LaboratorioFormulario implements OnInit {
 
   laboratorio: Laboratorio = {
     nombre: '',
-    direccion: '',
-    telefono: '',
-    estado: 'Activo'
+    sede: '',
+    capacidad: 30,
+    equipos: [],
+    estado: 'disponible'
   };
+
+  equiposTexto = '';
+
+  editando = false;
+  cargando = false;
 
   constructor(
     private router: Router,
@@ -31,25 +37,76 @@ export class LaboratorioFormulario {
     private laboratorioService: LaboratorioService
   ) {}
 
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if (id) {
+      this.editando = true;
+      this.cargando = true;
+
+      this.laboratorioService
+        .obtenerLaboratorio(Number(id))
+        .subscribe({
+          next: (data) => {
+            this.laboratorio = data;
+            this.equiposTexto = data.equipos.join(', ');
+            this.cargando = false;
+          },
+          error: (error) => {
+            console.error('Error al cargar laboratorio:', error);
+            alert('No se pudo cargar el laboratorio.');
+            this.cargando = false;
+            this.router.navigate(['/laboratorios']);
+          }
+        });
+    }
+  }
+
+  actualizarEquipos(): void {
+    this.laboratorio.equipos = this.equiposTexto
+      .split(',')
+      .map(e => e.trim())
+      .filter(e => e.length > 0);
+  }
+
   guardar(): void {
+
+    this.actualizarEquipos();
 
     if (
       !this.laboratorio.nombre.trim() ||
-      !this.laboratorio.direccion.trim() ||
-      !this.laboratorio.telefono.trim()
+      !this.laboratorio.sede.trim() ||
+      this.laboratorio.capacidad <= 0 ||
+      !Number.isFinite(this.laboratorio.capacidad)
     ) {
-      alert('Completa todos los campos');
+      alert('Completa todos los campos correctamente.');
       return;
     }
 
-    this.laboratorioService.crearLaboratorio(this.laboratorio).subscribe({
+    const id = this.route.snapshot.paramMap.get('id');
+
+    const operacion = id
+      ? this.laboratorioService.actualizarLaboratorio(
+          Number(id),
+          this.laboratorio
+        )
+      : this.laboratorioService.crearLaboratorio(
+          this.laboratorio
+        );
+
+    operacion.subscribe({
       next: () => {
-        alert('¡Laboratorio registrado correctamente!');
+        alert(
+          this.editando
+            ? '¡Laboratorio actualizado correctamente!'
+            : '¡Laboratorio registrado correctamente!'
+        );
+
         this.router.navigate(['/laboratorios']);
       },
       error: (error) => {
-        console.error('Error al registrar laboratorio:', error);
-        alert('No se pudo registrar el laboratorio. Verifica el servidor.');
+        console.error('Error al guardar laboratorio:', error);
+        alert('No se pudo guardar el laboratorio. Verifica el servidor.');
       }
     });
   }
