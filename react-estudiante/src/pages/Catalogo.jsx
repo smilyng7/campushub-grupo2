@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import ListaLaboratorios from '../components/ListaLaboratorios';
 import db from '../data/db.json';
 
 export default function Catalogo() {
@@ -78,69 +78,7 @@ export default function Catalogo() {
         Se encontraron {laboratoriosFiltrados.length} laboratorios.
       </p>
 
-      <div className="row g-3">
-
-        {laboratoriosFiltrados.length > 0 ? (
-
-          laboratoriosFiltrados.map((laboratorio) => (
-
-            <div
-              className="col-md-6 col-lg-4"
-              key={laboratorio.id}
-            >
-              <article className="card h-100 shadow-sm">
-
-                <div className="card-body">
-
-                  <h2 className="h5 card-title">
-                    {laboratorio.nombre}
-                  </h2>
-
-                  <p className="card-text text-body-secondary">
-                    Sede: {laboratorio.sede}
-                  </p>
-
-                  <p>
-                    Capacidad: {laboratorio.capacidad} personas
-                  </p>
-
-                  <span
-                    className={`badge ${
-                      laboratorio.estado === 'disponible'
-                        ? 'bg-success'
-                        : 'bg-warning text-dark'
-                    }`}
-                  >
-                    {laboratorio.estado}
-                  </span>
-
-                  <div className="mt-3">
-                    <Link
-                      to={`/catalogo/${laboratorio.id}`}
-                      className="btn btn-outline-primary"
-                    >
-                      Ver detalles
-                    </Link>
-                  </div>
-
-                </div>
-
-              </article>
-            </div>
-
-          ))
-
-        ) : (
-
-          <div className="col-12">
-            <div className="alert alert-info">
-              No se encontraron laboratorios con esos filtros.
-            </div>
-          </div>
-
-        )}
-
-      </div>
+      <ListaLaboratorios laboratorios={laboratoriosFiltrados} />
     </div>
   );
 }

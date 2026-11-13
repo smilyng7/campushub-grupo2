@@ -20,7 +20,7 @@ export default function TarjetaLaboratorio({ lab }) {
             </div>
 
             <div className="card-footer bg-transparent border-top-0 pb-3">
-                <Link to={`/laboratorios/${lab.id}`} className="btn btn-outline-primary w-100">
+                <Link to={`/catalogo/${lab.id}`} className="btn btn-outline-primary w-100">
                     Ver Detalle / Reservar
                 </Link>
             </div>
