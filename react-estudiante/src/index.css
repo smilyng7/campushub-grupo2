@@ -15,3 +15,212 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* ==========================================================================
+   Estilos del Módulo de Login (CampusHub)
+   ========================================================================== */
+.login-wrapper {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.login-card {
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  background-color: var(--bs-card-bg, #ffffff);
+  width: 100%;
+  max-width: 900px;
+}
+
+[data-bs-theme='dark'] .login-card {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Panel izquierdo con gradiente institucional azul */
+.login-brand-panel {
+  background: linear-gradient(155deg, #0d6efd 0%, #0056b3 100%);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem 2.5rem;
+}
+
+@media (max-width: 767.98px) {
+  .login-brand-panel {
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Formas decorativas sutiles para profundidad visual */
+.login-brand-panel::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.login-brand-panel::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.login-badge-portal {
+  background: #ffffff;
+  color: #0d6efd;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 50rem;
+  display: inline-block;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.login-brand-title {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.login-brand-desc {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.login-brand-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 1.25rem;
+}
+
+/* Panel derecho (formulario) */
+.login-form-panel {
+  padding: 3rem 2.75rem;
+}
+
+@media (max-width: 767.98px) {
+  .login-form-panel {
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Input personalizado con icono interno unificado */
+.login-input-group {
+  display: flex;
+  align-items: center;
+  background-color: var(--bs-tertiary-bg, #f8fafc);
+  border: 1.5px solid var(--bs-border-color, #e2e8f0);
+  border-radius: 0.65rem;
+  padding: 0.45rem 0.75rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.login-input-group:focus-within {
+  border-color: #86b7fe;
+  background-color: var(--bs-body-bg, #ffffff);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.18);
+}
+
+.login-input-icon {
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.6rem;
+  user-select: none;
+}
+
+.login-input-control {
+  border: none;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--bs-body-color, #212529);
+  padding: 0.25rem 0;
+}
+
+.login-input-control:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.login-input-control::placeholder {
+  color: var(--bs-secondary-color, #94a3b8);
+  font-size: 0.9rem;
+}
+
+.login-toggle-btn {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  color: var(--bs-secondary-color, #64748b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  transition: color 0.15s ease;
+}
+
+.login-toggle-btn:hover {
+  color: var(--bs-body-color, #212529);
+}
+
+.login-submit-btn {
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  border-radius: 0.65rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.login-submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+}
+
+.login-submit-btn:active {
+  transform: translateY(0);
+}
+
+.login-demo-btn {
+  background: transparent;
+  border: none;
+  color: var(--bs-secondary-color, #64748b);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.login-demo-btn:hover {
+  color: #0d6efd;
+  background-color: rgba(13, 110, 253, 0.06);
+}
+
