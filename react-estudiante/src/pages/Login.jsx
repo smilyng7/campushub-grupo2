@@ -17,7 +17,7 @@ export default function Login() {
       return;
     }
 
-    const destino = location.state?.from?.pathname || '/mis-reservas';
+    const destino = location.state?.from || '/mis-reservas';
     navigate(destino, { replace: true });
   };
 
