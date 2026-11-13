@@ -28,7 +28,7 @@ export default function Login() {
           <h1 className="h2 mb-4">Iniciar sesión</h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <label className="form-label" htmlFor="codigo">Código de estudiante</label>
+              <label className="form-label" htmlFor="codigo">Código</label>
               <input
                 id="codigo"
                 className="form-control"
