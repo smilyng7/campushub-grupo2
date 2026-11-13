@@ -4,7 +4,7 @@
       "id": 1,
       "nombre": "Ana Torres",
       "correo": "admin1@utp.edu.pe",
-      "codigo": "A00000001",
+      "codigo": "A01",
       "rol": "admin",
       "password": "admin123"
     },
@@ -12,7 +12,7 @@
       "id": 2,
       "nombre": "Carlos Pérez",
       "correo": "admin2@utp.edu.pe",
-      "codigo": "A00000002",
+      "codigo": "A02",
       "rol": "admin",
       "password": "admin123"
     },
