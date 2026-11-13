@@ -58,14 +58,16 @@ export default function Navbar({
               <>
                 <li className="nav-item">
                   <NavLink to="/mis-reservas" className={navLinkClass}>
-                    Mis Reservas
+                    {usuario.rol === 'admin' ? 'Administrar reservas' : 'Mis Reservas'}
                   </NavLink>
                 </li>
-                <li className="nav-item">
-                  <NavLink to="/nueva-reserva" className={navLinkClass}>
-                    Nueva Reserva
-                  </NavLink>
-                </li>
+                {usuario.rol !== 'admin' && (
+                  <li className="nav-item">
+                    <NavLink to="/nueva-reserva" className={navLinkClass}>
+                      Nueva Reserva
+                    </NavLink>
+                  </li>
+                )}
               </>
             )}
           </ul>

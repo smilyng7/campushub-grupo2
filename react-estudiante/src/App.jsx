@@ -34,9 +34,13 @@ import PortalPage from './pages/PortalPage';
 import NuevaReserva from './pages/NuevaReserva';
 
 // RUTAS PROTEGIDAS
-function RutaProtegida({ children }) {
+function RutaProtegida({ children, soloEstudiantes = false }) {
   const { usuario } = useAuth();
   const location = useLocation();
+
+  if (usuario && soloEstudiantes && usuario.rol === 'admin') {
+    return <Navigate to="/mis-reservas" replace />;
+  }
 
   return usuario ? (
     children
@@ -61,7 +65,9 @@ function Aplicacion() {
     const titulos = {
       '/': 'Inicio',
       '/catalogo': 'Catálogo de laboratorios',
-      '/mis-reservas': 'Mis reservas',
+      '/mis-reservas': usuario?.rol === 'admin'
+        ? 'Administrar reservas'
+        : 'Mis reservas',
       '/nueva-reserva': 'Nueva reserva',
       '/login': 'Iniciar sesión',
     };
@@ -74,7 +80,7 @@ function Aplicacion() {
 
     document.title = `${titulo} | CampusHub`;
 
-  }, [location.pathname]);
+  }, [location.pathname, usuario?.rol]);
 
   return (
     <div className="min-vh-100 bg-body">
@@ -113,7 +119,7 @@ function Aplicacion() {
           <Route
             path="/nueva-reserva"
             element={
-              <RutaProtegida>
+              <RutaProtegida soloEstudiantes>
                 <NuevaReserva />
               </RutaProtegida>
             }

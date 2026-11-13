@@ -1,4 +1,5 @@
 import HistorialReservas from '../components/HistorialReservas';
+import AdministrarReservas from '../components/AdministrarReservas';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -20,44 +21,51 @@ function formatearTiempo(segundos) {
 export default function PortalPage() {
   const { usuario } = useAuth();
   const { reservas } = useReservas();
-  // HOOK useState: contador regresivo
-  const [tiempoRestante, setTiempoRestante] = useState('');
+  const esAdmin = usuario?.rol === 'admin';
+  const [ahora, setAhora] = useState(null);
   // Reservas del usuario que inició sesión
   const misReservas = reservas.filter(
     (reserva) => reserva.usuarioId === usuario?.id
   );
   // Buscar la próxima reserva
-  const proximaReserva = misReservas
+  const proximaReserva = !esAdmin && ahora !== null ? misReservas
     .filter((reserva) => {
       return (
         reserva.estado !== 'rechazada' &&
-        obtenerFechaReserva(reserva).getTime() > Date.now()
+        obtenerFechaReserva(reserva).getTime() > ahora
       );
     })
     .sort(
       (a, b) =>
         obtenerFechaReserva(a) - obtenerFechaReserva(b)
-    )[0];
+    )[0] : null;
   // HOOK useEffect: contador regresivo
   useEffect(() => {
-    if (!proximaReserva) {
-      setTiempoRestante('No tienes próximas reservas');
-      return undefined;
-    }
-    const actualizarContador = () => {
-      const diferencia = Math.floor(
-        (obtenerFechaReserva(proximaReserva).getTime() -
-          Date.now()) / 1000
-      );
-      setTiempoRestante(
-        formatearTiempo(Math.max(0, diferencia))
-      );
+    if (esAdmin) return undefined;
+    const actualizarAhora = () => setAhora(Date.now());
+    const inicio = setTimeout(actualizarAhora, 0);
+    const intervalo = setInterval(actualizarAhora, 1000);
+    return () => {
+      clearTimeout(inicio);
+      clearInterval(intervalo);
     };
-    actualizarContador();
-    const intervalo = setInterval(actualizarContador, 1000);
-    // Limpiar intervalo al desmontar o cambiar la reserva
-    return () => clearInterval(intervalo);
-  }, [proximaReserva?.id]);
+  }, [esAdmin]);
+  const tiempoRestante = proximaReserva
+    ? formatearTiempo(Math.max(
+      0,
+      Math.floor((obtenerFechaReserva(proximaReserva).getTime() - ahora) / 1000)
+    ))
+    : 'No tienes próximas reservas';
+
+  if (esAdmin) {
+    return (
+      <div className="container py-4">
+        <h1 className="h2 mb-4">Administrar reservas</h1>
+        <AdministrarReservas />
+      </div>
+    );
+  }
+
   return (
     <div className="container py-4">
       <h1 className="h2 mb-4">

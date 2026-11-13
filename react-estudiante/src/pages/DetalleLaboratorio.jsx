@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import db from '../data/db.json';
 
 export default function DetalleLaboratorio() {
+  const { usuario } = useAuth();
   const { id } = useParams();
   const laboratorio = db.laboratorios?.find((l) => l.id === Number(id));
+  const esAdmin = usuario?.rol === 'admin';
 
   // Hook useEffect: actualiza el título de la pestaña según el recurso consultado
   useEffect(() => {
@@ -88,7 +91,7 @@ export default function DetalleLaboratorio() {
               ← Volver al Catálogo
             </Link>
 
-            {estaDisponible ? (
+            {estaDisponible && !esAdmin ? (
               <Link
                 to={`/nueva-reserva?laboratorioId=${laboratorio.id}`}
                 className="btn btn-success"
@@ -97,7 +100,7 @@ export default function DetalleLaboratorio() {
               </Link>
             ) : (
               <button className="btn btn-secondary" disabled>
-                En Mantenimiento (No disponible)
+                {estaDisponible ? 'Solo estudiantes pueden solicitar reservas' : 'En Mantenimiento (No disponible)'}
               </button>
             )}
           </div>
