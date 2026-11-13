@@ -31,6 +31,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import PortalPage from './pages/PortalPage';
+import NuevaReserva from './pages/NuevaReserva';
 
 // RUTAS PROTEGIDAS
 function RutaProtegida({ children }) {
@@ -104,7 +105,7 @@ function Aplicacion() {
             path="/mis-reservas"
             element={
               <RutaProtegida>
-                <PortalPage titulo="Mis reservas" />
+                <PortalPage />
               </RutaProtegida>
             }
           />
@@ -113,7 +114,7 @@ function Aplicacion() {
             path="/nueva-reserva"
             element={
               <RutaProtegida>
-                <PortalPage titulo="Nueva reserva" />
+                <NuevaReserva />
               </RutaProtegida>
             }
           />
