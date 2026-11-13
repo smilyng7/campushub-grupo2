@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync-core": "node -e \"require('fs').cpSync('../core-js','src/core',{recursive:true})\""
   },
   "dependencies": {
     "bootstrap": "^5.3.9",
