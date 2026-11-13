@@ -1,0 +1,36 @@
+
+.formulario-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: clamp(24px, 5vw, 40px);
+}
+
+.eyebrow {
+  color: var(--campus-red);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+label {
+  font-weight: 600;
+  color: var(--campus-ink);
+}
+
+.botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.botones .btn {
+  min-width: 150px;
+}

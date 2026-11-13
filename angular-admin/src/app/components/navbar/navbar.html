@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand-lg navbar-dark shadow">
+  <div class="container-fluid px-4">
+
+    <a class="navbar-brand fw-bold" routerLink="/dashboard">
+      <span class="brand-mark me-2" aria-hidden="true">C</span>
+      <span class="brand-copy">
+        <span class="brand-name">CampusHub</span>
+        <span class="brand-caption">GESTIÓN UNIVERSITARIA</span>
+      </span>
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#menuPrincipal"
+      aria-controls="menuPrincipal"
+      aria-expanded="false"
+      aria-label="Mostrar navegación">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="menuPrincipal">
+
+      <ul class="navbar-nav ms-auto gap-lg-2">
+
+        <li class="nav-item">
+          <a class="nav-link"
+             routerLink="/dashboard"
+             routerLinkActive="active"
+             [routerLinkActiveOptions]="{exact:true}">
+            Dashboard
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"
+             routerLink="/laboratorios"
+             routerLinkActive="active">
+            Laboratorios
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"
+             routerLink="/reservas"
+             routerLinkActive="active">
+            Reservas
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>

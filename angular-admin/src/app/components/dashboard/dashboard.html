@@ -1,0 +1,151 @@
+<div class="container-fluid">
+
+  <div class="mb-4">
+    <h2 class="fw-bold">Panel administrativo</h2>
+    <p class="text-secondary">
+      Bienvenido a CampusHub. Administra los laboratorios y reservas del campus.
+    </p>
+  </div>
+
+  <div class="row g-4">
+
+    <div class="col-md-6 col-xl-3">
+      <div class="card dashboard-card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-secondary mb-1">Total laboratorios</p>
+              <h2 class="fw-bold">{{ totalLaboratorios }}</h2>
+            </div>
+            <span class="icon-dashboard bg-primary-subtle">🏢</span>
+          </div>
+          <small class="text-secondary">Recursos registrados</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+      <div class="card dashboard-card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-secondary mb-1">Disponibles</p>
+              <h2 class="fw-bold text-success">
+                {{ laboratoriosDisponibles }}
+              </h2>
+            </div>
+            <span class="icon-dashboard bg-success-subtle">✓</span>
+          </div>
+          <small class="text-secondary">Listos para reservar</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+      <div class="card dashboard-card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-secondary mb-1">En mantenimiento</p>
+              <h2 class="fw-bold text-warning">
+                {{ laboratoriosMantenimiento }}
+              </h2>
+            </div>
+            <span class="icon-dashboard bg-warning-subtle">🔧</span>
+          </div>
+          <small class="text-secondary">No disponibles</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+      <div class="card dashboard-card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-secondary mb-1">Total reservas</p>
+              <h2 class="fw-bold text-primary">{{ totalReservas }}</h2>
+            </div>
+            <span class="icon-dashboard bg-primary-subtle">📅</span>
+          </div>
+          <small class="text-secondary">Solicitudes registradas</small>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row g-4 mt-2">
+
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">Estado de las reservas</h5>
+
+          <div class="d-flex justify-content-between mb-3">
+            <span>Pendientes</span>
+            <span class="badge bg-warning text-dark">
+              {{ reservasPendientes }}
+            </span>
+          </div>
+
+          <div class="progress mb-3">
+            <div class="progress-bar bg-warning"
+                 [style.width.%]="porcentajePendientes">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between mb-3">
+            <span>Aprobadas</span>
+            <span class="badge bg-success">{{ reservasAprobadas }}</span>
+          </div>
+
+          <div class="progress mb-3">
+            <div class="progress-bar bg-success"
+                 [style.width.%]="porcentajeAprobadas">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between mb-3">
+            <span>Rechazadas</span>
+            <span class="badge bg-danger">{{ reservasRechazadas }}</span>
+          </div>
+
+          <div class="progress">
+            <div class="progress-bar bg-danger"
+                 [style.width.%]="porcentajeRechazadas">
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+
+          <h5 class="fw-bold mb-3">Accesos rápidos</h5>
+
+          <a routerLink="/laboratorios"
+             class="btn btn-outline-primary w-100 mb-3">
+            🏢 Gestionar laboratorios
+          </a>
+
+          <a routerLink="/laboratorios/nuevo"
+             class="btn btn-primary w-100 mb-3">
+            + Registrar laboratorio
+          </a>
+
+          <a routerLink="/reservas"
+             class="btn btn-outline-secondary w-100">
+            📅 Administrar reservas
+          </a>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

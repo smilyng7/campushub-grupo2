@@ -1,0 +1,81 @@
+<div class="container py-4">
+
+  <h2>Lista de Laboratorios</h2>
+  <p>Administra los laboratorios del campus.</p>
+
+  @if (cargando) {
+    <div class="alert alert-info">
+      Cargando laboratorios...
+    </div>
+  }
+
+  @if (error) {
+    <div class="alert alert-danger">
+      {{ error }}
+    </div>
+  }
+
+  @if (!cargando && !error) {
+
+    <div class="mb-3">
+      <a routerLink="/laboratorios/nuevo" class="btn btn-primary">
+        + Nuevo laboratorio
+      </a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Sede</th>
+            <th>Capacidad</th>
+            <th>Equipos</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (lab of laboratorios; track lab.id) {
+            <tr>
+              <td>{{ lab.id }}</td>
+              <td>{{ lab.nombre }}</td>
+              <td>{{ lab.sede }}</td>
+              <td>{{ lab.capacidad }}</td>
+              <td>{{ lab.equipos.join(', ') }}</td>
+              <td>
+                <span class="badge"
+                  [ngClass]="{
+                    'bg-success': lab.estado === 'disponible',
+                    'bg-danger': lab.estado === 'mantenimiento'
+                  }">
+                  {{ lab.estado }}
+                </span>
+              </td>
+              <td>
+                <a
+                  class="btn btn-primary btn-sm me-2"
+                  [routerLink]="['/laboratorio', lab.id]">
+                  Editar
+                </a>
+                <button class="btn btn-danger btn-sm"
+                  (click)="eliminarLaboratorio(lab.id!)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="text-center">
+                No hay laboratorios registrados.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>

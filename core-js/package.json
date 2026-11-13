@@ -1,0 +1,13 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "description": "Modulo nucleo reutilizable para CampusHub (Validadores, Modelos y Estadisticas)",
+  "main": "core.test.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}

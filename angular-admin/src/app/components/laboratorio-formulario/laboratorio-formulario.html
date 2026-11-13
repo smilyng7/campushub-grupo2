@@ -1,0 +1,98 @@
+
+<div class="formulario-container card border-0 shadow-sm">
+
+  <p class="eyebrow mb-2">RECURSOS DEL CAMPUS</p>
+  <h2 class="fw-bold">{{ editando ? 'Editar laboratorio' : 'Registrar laboratorio' }}</h2>
+
+  <p>
+    {{ editando
+      ? 'Modifica los datos del laboratorio.'
+      : 'Completa los datos del nuevo laboratorio.' }}
+  </p>
+
+  <div *ngIf="cargando" class="text-secondary">
+    Cargando información del laboratorio...
+  </div>
+
+  <form *ngIf="!cargando" (ngSubmit)="guardar()">
+
+    <label for="nombre">Nombre del laboratorio</label>
+    <input
+      id="nombre"
+      type="text"
+      name="nombre"
+      class="form-control"
+      [(ngModel)]="laboratorio.nombre"
+      placeholder="Ejemplo: Lab A-301"
+      required
+    >
+
+    <label for="sede">Sede</label>
+    <input
+      id="sede"
+      type="text"
+      name="sede"
+      class="form-control"
+      [(ngModel)]="laboratorio.sede"
+      placeholder="Ejemplo: Lima Centro"
+      required
+    >
+
+    <label for="capacidad">Capacidad</label>
+    <input
+      id="capacidad"
+      type="number"
+      name="capacidad"
+      class="form-control"
+      [(ngModel)]="laboratorio.capacidad"
+      min="1"
+      required
+    >
+
+    <label for="equipos">Equipos</label>
+    <input
+      id="equipos"
+      type="text"
+      name="equipos"
+      class="form-control"
+      [(ngModel)]="equiposTexto"
+      placeholder="PC i7, Proyector, Arduino"
+    >
+
+    <small class="form-text text-secondary">Separa los equipos con comas.</small>
+
+    <label for="estado">Estado</label>
+    <select
+      id="estado"
+      name="estado"
+      class="form-select"
+      [(ngModel)]="laboratorio.estado"
+      required
+    >
+      <option value="disponible">Disponible</option>
+      <option value="mantenimiento">Mantenimiento</option>
+    </select>
+
+    <div class="botones">
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="cargando"
+      >
+        {{ editando ? 'Actualizar laboratorio' : 'Guardar laboratorio' }}
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        (click)="cancelar()"
+      >
+        Cancelar
+      </button>
+
+    </div>
+
+  </form>
+
+</div>

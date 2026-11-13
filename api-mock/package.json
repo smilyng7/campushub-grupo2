@@ -1,0 +1,22 @@
+{
+  "name": "campushub-api-mock",
+  "version": "1.0.0",
+  "description": "API Mock de CampusHub",
+  "main": "index.js",
+  "scripts": {
+    "api": "npx json-server --watch db.json --port 3000",
+    "start": "npx json-server --watch db.json --port 3000"
+  },
+  "devDependencies": {
+    "json-server": "^0.17.4"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "json-server": "^0.17.4"
+  }
+}

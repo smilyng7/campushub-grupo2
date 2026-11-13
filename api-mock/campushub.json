@@ -1,0 +1,21 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "CampusHub API",
+    "requests": [
+        {
+            "name": "Obtener Reservas",
+            "method": "GET",
+            "url": "http://localhost:3000/reservas"
+        },
+        {
+            "name": "Crear Reserva",
+            "method": "POST",
+            "url": "http://localhost:3000/reservas"
+        },
+        {
+            "name": "Eliminar Reserva",
+            "method": "DELETE",
+            "url": "http://localhost:3000/reservas/1"
+        }
+    ]
+}

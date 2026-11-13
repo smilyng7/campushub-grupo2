@@ -1,0 +1,63 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.dashboard-card {
+  border: none;
+  border-radius: 16px;
+  min-height: 145px;
+  transition: all 0.25s ease;
+  background: var(--campus-surface);
+  border-top: 3px solid var(--campus-red);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(23, 23, 25, 0.1) !important;
+}
+
+.dashboard-card .card-body {
+  padding: 24px;
+}
+
+.dashboard-card h2 {
+  font-size: 32px;
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.dashboard-card p {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.icon-dashboard {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 23px;
+}
+
+.progress {
+  height: 9px;
+  border-radius: 20px;
+  background-color: #ece9e9;
+}
+
+.progress-bar {
+  border-radius: 20px;
+}
+
+.card {
+  border-radius: 16px;
+}
+
+@media (max-width: 576px) {
+  .dashboard-card h2 {
+    font-size: 26px;
+  }
+}
