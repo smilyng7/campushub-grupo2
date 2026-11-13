@@ -73,7 +73,7 @@ export default function Login() {
               {/* Campo: Código de Estudiante */}
               <div className="mb-3">
                 <label htmlFor="codigo" className="form-label fw-semibold small text-body mb-1">
-                  Código de Estudiante
+                  Código de Laboratorio
                 </label>
                 <div className="login-input-group">
                   <span className="login-input-icon" role="img" aria-label="código">
