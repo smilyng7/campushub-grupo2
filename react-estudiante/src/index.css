@@ -38,8 +38,51 @@ body {
 }
 
 [data-bs-theme='dark'] .login-card {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
-  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
+  border-color: rgba(255, 255, 255, 0.12);
+  background-color: #1e242b;
+}
+
+[data-bs-theme='dark'] .login-input-group {
+  background-color: #2b3035;
+  border-color: #444d56;
+}
+
+[data-bs-theme='dark'] .login-input-group:focus-within {
+  background-color: #212529;
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+[data-bs-theme='dark'] .login-input-control {
+  color: #f8f9fa;
+}
+
+[data-bs-theme='dark'] .login-input-control::placeholder {
+  color: #94a3b8;
+}
+
+[data-bs-theme='dark'] .login-toggle-btn {
+  color: #adb5bd;
+}
+
+[data-bs-theme='dark'] .login-toggle-btn:hover {
+  color: #ffffff;
+}
+
+[data-bs-theme='dark'] .login-demo-btn {
+  color: #adb5bd;
+}
+
+[data-bs-theme='dark'] .login-demo-btn:hover {
+  color: #60a5fa;
+  background-color: rgba(96, 165, 250, 0.15);
+}
+
+/* Compatibilidad modo oscuro para Hero de Inicio (Bienvenido a CampusHub Labs) */
+[data-bs-theme='dark'] .home-hero-card {
+  background-color: #212529 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 /* Panel izquierdo con gradiente institucional azul */

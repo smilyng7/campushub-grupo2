@@ -44,7 +44,7 @@ export default function Login() {
               <span className="login-badge-portal">Portal Estudiantil</span>
               <div className="mt-4 pt-2">
                 <h1 className="login-brand-title text-white">
-                  Bienvenido a<br />CampusHub
+                  Bienvenido a<br />CampusHub Labs
                 </h1>
                 <p className="login-brand-desc mt-3">
                   Consulta la disponibilidad de equipos en tiempo real y reserva tu espacio de laboratorio sin filas ni cruces de horario.
@@ -61,10 +61,10 @@ export default function Login() {
           {/* Panel Lateral Derecho (Formulario de Autenticación) */}
           <div className="col-lg-7 col-md-7 login-form-panel d-flex flex-column justify-content-center">
             <div className="mb-4">
-              <h2 className="fw-bold mb-1" style={{ color: 'var(--bs-heading-color, #1e293b)', fontSize: '1.85rem' }}>
+              <h2 className="fw-bold mb-1 text-body" style={{ fontSize: '1.85rem' }}>
                 Iniciar sesión
               </h2>
-              <p className="text-muted small mb-0">
+              <p className="text-body-secondary small mb-0">
                 Ingresa tus credenciales universitarias para continuar
               </p>
             </div>
@@ -83,7 +83,7 @@ export default function Login() {
                     id="codigo"
                     type="text"
                     className="login-input-control"
-                    placeholder="Ej. A01"
+                    placeholder="Ingresar codigo"
                     value={codigo}
                     onChange={(e) => {
                       setCodigo(e.target.value);
@@ -108,7 +108,7 @@ export default function Login() {
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     className="login-input-control"
-                    placeholder="Ingresa tu contraseña"
+                    placeholder="Ingresar contraseña"
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);

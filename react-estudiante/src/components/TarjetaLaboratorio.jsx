@@ -12,14 +12,14 @@ export default function TarjetaLaboratorio({ lab }) {
                 {/* Lista de equipos */}
                 <div className="mb-3">
                     {lab.equipos.map((eq, index) => (
-                        <span key={index} className="badge bg-light text-dark border me-1 mb-1">{eq}</span>
+                        <span key={index} className="badge bg-body-secondary text-body border me-1 mb-1">{eq}</span>
                     ))}
                 </div>
 
                 <BadgeEstado estado={lab.estado} />
             </div>
 
-            <div className="card-footer bg-white border-top-0 pb-3">
+            <div className="card-footer bg-transparent border-top-0 pb-3">
                 <Link to={`/laboratorios/${lab.id}`} className="btn btn-outline-primary w-100">
                     Ver Detalle / Reservar
                 </Link>
