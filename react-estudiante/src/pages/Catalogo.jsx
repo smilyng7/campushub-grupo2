@@ -1,59 +1,75 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import ListaLaboratorios from '../components/ListaLaboratorios';
-
-const API_URL = 'http://localhost:3000';
+import { obtenerLaboratorios } from "../services/laboratorioFetch";
+import { sedesUnicas } from '../../../core-js/estadisticas.js';
 
 export default function Catalogo() {
   const [laboratorios, setLaboratorios] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
+  const [recargarKey, setRecargarKey] = useState(0);
 
-  const [sedeSeleccionada, setSedeSeleccionada] = useState('Todas');
   const [busqueda, setBusqueda] = useState('');
+  const [sedeSeleccionada, setSedeSeleccionada] = useState('Todas');
+  const [estadoSeleccionado, setEstadoSeleccionado] = useState('Todos');
+  const [capacidadMinima, setCapacidadMinima] = useState('');
 
-  // FETCH API: obtener laboratorios desde json-server
   useEffect(() => {
-    const obtenerLaboratorios = async () => {
+    const controller = new AbortController();
+
+    const cargar = async () => {
       try {
         setCargando(true);
         setError('');
-
-        const response = await fetch(`${API_URL}/laboratorios`);
-
-        if (!response.ok) {
-          throw new Error('Error al obtener los laboratorios');
-        }
-
-        const datos = await response.json();
+        const datos = await obtenerLaboratorios({ signal: controller.signal });
         setLaboratorios(datos);
-
-      } catch (error) {
-        setError(error.message);
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        setError(err.message || 'No se pudieron cargar los laboratorios.');
       } finally {
-        setCargando(false);
+        if (!controller.signal.aborted) {
+          setCargando(false);
+        }
       }
     };
 
-    obtenerLaboratorios();
-  }, []);
+    cargar();
+    return () => controller.abort();
+  }, [recargarKey]);
 
-  const sedes = [
-    'Todas',
-    ...new Set(laboratorios.map((lab) => lab.sede)),
-  ];
+  const sedes = ['Todas', ...sedesUnicas(laboratorios)];
 
   const laboratoriosFiltrados = laboratorios.filter((lab) => {
-    const coincideSede =
-      sedeSeleccionada === 'Todas' ||
-      lab.sede === sedeSeleccionada;
+    const texto = busqueda.trim().toLowerCase();
 
     const coincideTexto =
-      lab.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      lab.sede.toLowerCase().includes(busqueda.toLowerCase());
+      !texto ||
+      lab.nombre.toLowerCase().includes(texto) ||
+      lab.sede.toLowerCase().includes(texto) ||
+      (lab.equipos || []).some((eq) => eq.toLowerCase().includes(texto));
 
-    return coincideSede && coincideTexto;
+    const coincideSede =
+      sedeSeleccionada === 'Todas' || lab.sede === sedeSeleccionada;
+
+    const coincideEstado =
+      estadoSeleccionado === 'Todos' || lab.estado === estadoSeleccionado;
+
+    const minCap = Number(capacidadMinima);
+    const coincideCapacidad =
+      !capacidadMinima || (Number.isFinite(minCap) && lab.capacidad >= minCap);
+    return coincideTexto && coincideSede && coincideEstado && coincideCapacidad;
   });
+  const hayFiltrosActivos =
+    busqueda !== '' ||
+    sedeSeleccionada !== 'Todas' ||
+    estadoSeleccionado !== 'Todos' ||
+    capacidadMinima !== '';
+  const limpiarFiltros = () => {
+    setBusqueda('');
+    setSedeSeleccionada('Todas');
+    setEstadoSeleccionado('Todos');
+    setCapacidadMinima('');
+  };
 
   if (cargando) {
     return (
@@ -63,15 +79,15 @@ export default function Catalogo() {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="container py-4">
-        <div className="alert alert-danger">
-          {error}
+        <div className="alert alert-danger d-flex align-items-center justify-content-between">
+          <span>{error}</span>
           <button
-            className="btn btn-outline-danger btn-sm ms-3"
-            onClick={() => window.location.reload()}
+            type="button"
+            className="btn btn-outline-danger btn-sm"
+            onClick={() => setRecargarKey((k) => k + 1)}
           >
             Reintentar
           </button>
@@ -79,34 +95,40 @@ export default function Catalogo() {
       </div>
     );
   }
-
   return (
     <div className="container py-4">
-      <h1 className="h2 mb-4">
-        Catálogo de laboratorios
-      </h1>
-
+      <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h1 className="h2 mb-0">Catálogo de laboratorios</h1>
+        {hayFiltrosActivos && (
+          <button
+            type="button"
+            className="btn btn-outline-secondary btn-sm"
+            onClick={limpiarFiltros}
+          >
+            Limpiar filtros
+          </button>
+        )}
+      </div>
       <div className="row g-3 mb-4">
-        <div className="col-md-6">
-          <label className="form-label">
-            Buscar laboratorio
+        <div className="col-md-4">
+          <label htmlFor="filtro-busqueda" className="form-label">
+            Buscar laboratorio o equipo
           </label>
-
           <input
+            id="filtro-busqueda"
             type="text"
             className="form-control"
-            placeholder="Escribe el nombre del laboratorio..."
+            placeholder="Ej. Lab A-301, Arduino, Proyector..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
         </div>
-
-        <div className="col-md-6">
-          <label className="form-label">
-            Filtrar por sede
+        <div className="col-md-3">
+          <label htmlFor="filtro-sede" className="form-label">
+            Sede
           </label>
-
           <select
+            id="filtro-sede"
             className="form-select"
             value={sedeSeleccionada}
             onChange={(e) => setSedeSeleccionada(e.target.value)}
@@ -118,17 +140,45 @@ export default function Catalogo() {
             ))}
           </select>
         </div>
+        <div className="col-md-3">
+          <label htmlFor="filtro-estado" className="form-label">
+            Estado
+          </label>
+          <select
+            id="filtro-estado"
+            className="form-select"
+            value={estadoSeleccionado}
+            onChange={(e) => setEstadoSeleccionado(e.target.value)}
+          >
+            <option value="Todos">Todos</option>
+            <option value="disponible">Disponible</option>
+            <option value="mantenimiento">En mantenimiento</option>
+          </select>
+        </div>
+        <div className="col-md-2">
+          <label htmlFor="filtro-capacidad" className="form-label">
+            Capacidad mín.
+          </label>
+          <input
+            id="filtro-capacidad"
+            type="number"
+            min="1"
+            max="60"
+            className="form-control"
+            placeholder="Ej. 25"
+            value={capacidadMinima}
+            onChange={(e) => setCapacidadMinima(e.target.value)}
+          />
+        </div>
       </div>
-
       <p className="text-body-secondary">
-        Se encontraron {laboratoriosFiltrados.length} laboratorios.
+        Mostrando {laboratoriosFiltrados.length} de {laboratorios.length} laboratorios.
       </p>
-
       {laboratoriosFiltrados.length > 0 ? (
         <ListaLaboratorios laboratorios={laboratoriosFiltrados} />
       ) : (
         <div className="alert alert-info">
-          No se encontraron laboratorios.
+          No se encontraron laboratorios con los filtros actuales.
         </div>
       )}
     </div>

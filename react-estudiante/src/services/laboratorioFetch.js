@@ -1,44 +1,29 @@
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-const API_URL = "http://localhost:3000";
+async function solicitarJson(ruta, { signal } = {}) {
+  const response = await fetch(`${API_URL}${ruta}`, { signal });
 
-// Obtener todos los laboratorios
-export async function obtenerLaboratorios() {
-  try {
-    const response = await fetch(`${API_URL}/laboratorios`);
-
-    if (!response.ok) {
-      throw new Error(
-        `Error al obtener laboratorios: ${response.status}`
-      );
-    }
-
-    const data = await response.json();
-    return data;
-
-  } catch (error) {
-    console.error("Error en Fetch:", error);
-    throw error;
-  }
-}
-
-// Obtener un laboratorio por su ID
-export async function obtenerLaboratorioPorId(id) {
-  try {
-    const response = await fetch(
-      `${API_URL}/laboratorios/${id}`
+  if (!response.ok) {
+    const cuerpoError = await response.json().catch(() => null);
+    const error = new Error(
+      cuerpoError?.mensaje || `Error en la peticion (${response.status})`
     );
-
-    if (!response.ok) {
-      throw new Error(
-        `Error al obtener el laboratorio: ${response.status}`
-      );
-    }
-
-    const data = await response.json();
-    return data;
-
-  } catch (error) {
-    console.error("Error en Fetch:", error);
+    error.status = response.status;
     throw error;
   }
+
+  return response.json();
 }
+
+export function obtenerLaboratorios(opciones = {}) {
+  return solicitarJson('/laboratorios', opciones);
+}
+
+export function obtenerLaboratorioPorId(id, opciones = {}) {
+  return solicitarJson(`/laboratorios/${id}`, opciones);
+}
+
+export function obtenerReservasPorLaboratorio(laboratorioId, opciones = {}) {
+  return solicitarJson(`/reservas?laboratorioId=${laboratorioId}`, opciones);
+}
+

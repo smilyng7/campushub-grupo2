@@ -1,106 +1,68 @@
-
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
-const API_URL = 'http://localhost:3000';
+import {
+  obtenerLaboratorioPorId,
+  obtenerReservasPorLaboratorio,
+} from '../services/laboratorioFetch';
 
 export default function DetalleLaboratorio() {
   const { usuario } = useAuth();
   const { id } = useParams();
 
-  // Estados para Fetch API
   const [laboratorio, setLaboratorio] = useState(null);
+  const [reservas, setReservas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
   const esAdmin = usuario?.rol === 'admin';
 
-  // FETCH API: obtener detalle del laboratorio
   useEffect(() => {
-    const obtenerLaboratorio = async () => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const cargar = async () => {
       try {
         setCargando(true);
         setError('');
-        setLaboratorio(null);
 
-        const response = await fetch(
-          `${API_URL}/laboratorios/${id}`
-        );
+        const [datosLab, datosReservas] = await Promise.all([
+          obtenerLaboratorioPorId(id, { signal }),
+          obtenerReservasPorLaboratorio(id, { signal }),
+        ]);
 
-        // Comprobar respuesta HTTP
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error('Laboratorio no encontrado');
-          }
+        setLaboratorio(datosLab);
+        setReservas(datosReservas);
 
-          throw new Error(
-            'Error al obtener el detalle del laboratorio'
-          );
-        }
-
-        const datos = await response.json();
-
-        setLaboratorio(datos);
-
-      } catch (error) {
-        setError(error.message);
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        setError(err.message);
       } finally {
-        setCargando(false);
+        if (!signal.aborted) setCargando(false);
       }
     };
 
-    obtenerLaboratorio();
+    cargar();
+    return () => controller.abort();
   }, [id]);
-
-  // Actualizar título de la pestaña
-  useEffect(() => {
-    if (cargando) {
-      document.title = 'Cargando laboratorio | CampusHub';
-    } else if (laboratorio) {
-      document.title = `${laboratorio.nombre} | CampusHub`;
-    } else {
-      document.title = 'Laboratorio no encontrado | CampusHub';
-    }
-  }, [laboratorio, cargando]);
-
-  // Estado de carga
+    // ----- Estados de pantalla -----
   if (cargando) {
     return (
       <div className="container py-5 text-center">
-        <div
-          className="spinner-border text-primary"
-          role="status"
-        >
-          <span className="visually-hidden">Cargando...</span>
-        </div>
-
-        <p className="mt-3">
-          Consultando laboratorio desde el API...
-        </p>
+        <div className="spinner-border text-primary" role="status" />
+        <p className="mt-3">Cargando laboratorio...</p>
       </div>
     );
   }
 
-  // Estado de error
   if (error) {
     return (
       <div className="container py-5">
         <div className="alert alert-warning shadow-sm">
-          <h4 className="alert-heading">
-            {error}
-          </h4>
-
-          <p>
-            No se pudo obtener la información solicitada.
-          </p>
-
+          <h4 className="alert-heading">{error}</h4>
+          <p>No se pudo obtener la información solicitada.</p>
           <hr />
-
-          <Link
-            to="/catalogo"
-            className="btn btn-primary"
-          >
+          <Link to="/catalogo" className="btn btn-primary">
             Volver al Catálogo
           </Link>
         </div>
@@ -108,31 +70,16 @@ export default function DetalleLaboratorio() {
     );
   }
 
-  // Si no existe el laboratorio
-  if (!laboratorio) {
-    return (
-      <div className="container py-5 text-center">
-        <div className="alert alert-warning">
-          <h4>Laboratorio no encontrado</h4>
+  if (!laboratorio) return null;
 
-          <p>
-            No existe ningún laboratorio con el identificador #{id}.
-          </p>
+  // ----- Variables locales -----
+  const estaDisponible = laboratorio.estado === 'disponible';
 
-          <Link
-            to="/catalogo"
-            className="btn btn-primary"
-          >
-            Volver al Catálogo
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const reservasOcupadas = reservas
+    .filter((r) => r.estado !== 'rechazada')
+    .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.horaInicio.localeCompare(b.horaInicio));
 
-  const estaDisponible =
-    laboratorio.estado === 'disponible';
-
+  // ----- Vista principal -----
   return (
     <div className="container py-4">
 
@@ -140,137 +87,105 @@ export default function DetalleLaboratorio() {
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
-            <Link to="/catalogo">
-              Catálogo
-            </Link>
+            <Link to="/catalogo">Catálogo</Link>
           </li>
-
-          <li
-            className="breadcrumb-item active"
-            aria-current="page"
-          >
+          <li className="breadcrumb-item active" aria-current="page">
             {laboratorio.nombre}
           </li>
         </ol>
       </nav>
 
       {/* Tarjeta de detalle */}
-      <div className="card shadow-sm border-0">
-
+      <div className="card shadow-sm border-0 mb-4">
         <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-
-          <h3 className="h5 mb-0">
-            {laboratorio.nombre}
-          </h3>
-
-          <span
-            className={`badge ${
-              estaDisponible
-                ? 'bg-success'
-                : 'bg-warning text-dark'
-            }`}
-          >
+          <h3 className="h5 mb-0">{laboratorio.nombre}</h3>
+          <span className={`badge ${estaDisponible ? 'bg-success text-dark' : 'bg-warning text-dark'}`}>
             {laboratorio.estado?.toUpperCase()}
           </span>
-
         </div>
 
         <div className="card-body">
-
-          {/* Información general */}
           <div className="row g-3 mb-4">
-
             <div className="col-md-6">
-              <span className="text-muted d-block small">
-                Sede
-              </span>
-
-              <span className="fw-bold">
-                {laboratorio.sede}
-              </span>
+              <span className="text-muted d-block small">Sede</span>
+              <span className="fw-bold">{laboratorio.sede}</span>
             </div>
-
             <div className="col-md-6">
-              <span className="text-muted d-block small">
-                Capacidad
-              </span>
-
-              <span className="fw-bold">
-                {laboratorio.capacidad} estudiantes
-              </span>
+              <span className="text-muted d-block small">Capacidad</span>
+              <span className="fw-bold">{laboratorio.capacidad} estudiantes</span>
             </div>
-
           </div>
 
-          {/* Equipamiento */}
-          <h5 className="h6 text-muted mb-2">
-            Equipamiento disponible:
-          </h5>
-
+          <h5 className="h6 text-muted mb-2">Equipamiento disponible:</h5>
           <ul className="list-group mb-4">
-
-            {laboratorio.equipos &&
-            laboratorio.equipos.length > 0 ? (
-
+            {laboratorio.equipos?.length > 0 ? (
               laboratorio.equipos.map((equipo, index) => (
-                <li
-                  key={`${equipo}-${index}`}
-                  className="list-group-item d-flex align-items-center"
-                >
-                  <span className="me-2 text-primary">
-                    ✔
-                  </span>
-
+                <li key={`${equipo}-${index}`} className="list-group-item d-flex align-items-center">
+                  <span className="me-2 text-primary">✔</span>
                   {equipo}
                 </li>
               ))
-
             ) : (
-
-              <li className="list-group-item text-muted">
-                Sin equipos registrados
-              </li>
-
+              <li className="list-group-item text-muted">Sin equipos registrados</li>
             )}
-
           </ul>
 
           {/* Botones */}
           <div className="d-flex justify-content-between align-items-center pt-2 flex-wrap gap-2">
-
-            <Link
-              to="/catalogo"
-              className="btn btn-outline-secondary"
-            >
+            <Link to="/catalogo" className="btn btn-outline-secondary">
               ← Volver al Catálogo
             </Link>
 
             {estaDisponible && !esAdmin ? (
-
               <Link
                 to={`/nueva-reserva?laboratorioId=${laboratorio.id}`}
                 className="btn btn-success"
               >
                 Solicitar Reserva
               </Link>
-
             ) : (
-
-              <button
-                className="btn btn-secondary"
-                disabled
-              >
+              <button className="btn btn-secondary" disabled>
                 {estaDisponible
                   ? 'Solo estudiantes pueden solicitar reservas'
                   : 'En Mantenimiento (No disponible)'}
               </button>
-
             )}
-
           </div>
-
         </div>
       </div>
+
+      {/* Horarios ocupados */}
+      <div className="card shadow-sm border-0">
+        <div className="card-header">
+          <h4 className="h6 mb-0">
+            Reservas activas ({reservasOcupadas.length})
+          </h4>
+        </div>
+        <div className="card-body p-0">
+          {reservasOcupadas.length > 0 ? (
+            <ul className="list-group list-group-flush">
+              {reservasOcupadas.map((r) => (
+                <li key={r.id} className="list-group-item d-flex justify-content-between align-items-center">
+                  <span>
+                    <strong>{r.fecha}</strong>
+                    <span className="ms-3 text-muted">
+                      {r.horaInicio} – {r.horaFin}
+                    </span>
+                  </span>
+                  <span className={`badge ${r.estado === 'aprobada' ? 'bg-success' : 'bg-warning text-dark'}`}>
+                    {r.estado}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-muted p-3 mb-0">
+              No hay reservas activas para este laboratorio.
+            </p>
+          )}
+        </div>
+      </div>
+
     </div>
   );
 }
