@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import db from '../data/db.json';
+import useLaboratorios from '../hooks/useLaboratorios';
 
 export default function Home() {
   const { usuario } = useAuth();
+  const { datos: laboratorios, cargando, error, actualizar } = useLaboratorios();
   const esAdmin = usuario?.rol === 'admin';
-  const laboratorios = db.laboratorios || [];
   const disponibles = laboratorios.filter((l) => l.estado === 'disponible').length;
 
   // Hook useEffect: actualiza el título de la pestaña para la página de inicio
@@ -28,7 +28,7 @@ export default function Home() {
           </p>
           <div className="d-flex flex-wrap gap-2 pt-2">
             <Link to="/catalogo" className="btn btn-primary btn-lg">
-              Explorar Catálogo ({disponibles} disponibles)
+              Explorar Catálogo ({cargando ? 'cargando...' : `${disponibles} disponibles`})
             </Link>
             {!esAdmin && (
               <Link to="/nueva-reserva" className="btn btn-outline-primary btn-lg">
@@ -38,6 +38,14 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {cargando && <p role="status">Cargando catálogo...</p>}
+      {error && <div className="alert alert-danger" role="alert">
+        <span>{error}</span>
+        <button type="button" className="btn btn-sm btn-outline-danger ms-3"
+          onClick={actualizar}>Reintentar</button>
+      </div>}
+      {!cargando && !error && laboratorios.length === 0
+        && <p className="alert alert-info">No hay laboratorios disponibles en el catálogo.</p>}
 
       {/* Tarjetas de Accesos Rápidos */}
       <div className="row g-4 mb-4">

@@ -16,6 +16,8 @@ export class ReservasLista implements OnInit {
   reservas = signal<Reserva[]>([]);
   cargando = signal<boolean>(true);
   error = signal<string>('');
+  errorAccion = signal<string>('');
+  actualizandoId = signal<number | null>(null);
 
   ngOnInit(): void {
     this.cargarReservas();
@@ -24,6 +26,7 @@ export class ReservasLista implements OnInit {
   cargarReservas(): void {
     this.cargando.set(true);
     this.error.set('');
+    this.errorAccion.set('');
 
     this.reservaService.obtenerReservas().subscribe({
       next: (datos) => {
@@ -44,9 +47,32 @@ export class ReservasLista implements OnInit {
       this.reservaService.eliminarReserva(id).subscribe({
         next: () => {
           this.reservas.update(lista => lista.filter(r => r.id !== id));
+          this.errorAccion.set('');
         },
-        error: (err) => console.error('Error al eliminar reserva:', err)
+        error: (err) => {
+          console.error('Error al eliminar reserva:', err);
+          this.errorAccion.set('No se pudo eliminar la reserva. Inténtalo nuevamente.');
+        }
       });
     }
+  }
+
+  cambiarEstado(reserva: Reserva, estado: Reserva['estado']): void {
+    if (!reserva.id || reserva.estado !== 'pendiente' || this.actualizandoId() !== null) return;
+    this.errorAccion.set('');
+    this.actualizandoId.set(reserva.id);
+    this.reservaService.actualizarEstado(reserva.id, estado).subscribe({
+      next: (actualizada) => {
+        this.reservas.update(lista =>
+          lista.map(item => item.id === actualizada.id ? actualizada : item)
+        );
+        this.actualizandoId.set(null);
+      },
+      error: (err) => {
+        console.error('Error al actualizar estado de reserva:', err);
+        this.errorAccion.set('No se pudo actualizar la reserva. Inténtalo nuevamente.');
+        this.actualizandoId.set(null);
+      }
+    });
   }
 }

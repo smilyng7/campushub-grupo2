@@ -38,7 +38,7 @@
           <th>Horario</th>
           <th>Motivo</th>
           <th>Estado</th>
-          <th class="text-center">Acciones</th> <!-- Columna nueva para el botón -->
+          <th class="text-center">Acciones</th>
         </tr>
       </thead>
 
@@ -86,11 +86,26 @@
 
           </td>
 
-          <!-- Botón de eliminar conectado al método eliminar() de tu TS -->
           <td class="text-center">
-            <button class="btn btn-outline-danger btn-sm" (click)="eliminar(reserva.id)">
-              <i class="bi bi-trash"></i> Eliminar
-            </button>
+            <div class="d-flex justify-content-center gap-1">
+              @if (reserva.estado === 'pendiente') {
+              <button class="btn btn-success btn-sm"
+                [disabled]="actualizandoId() !== null"
+                (click)="cambiarEstado(reserva, 'aprobada')">
+                Aprobar
+              </button>
+              <button class="btn btn-warning btn-sm"
+                [disabled]="actualizandoId() !== null"
+                (click)="cambiarEstado(reserva, 'rechazada')">
+                Rechazar
+              </button>
+              }
+              <button class="btn btn-outline-danger btn-sm"
+                [disabled]="actualizandoId() === reserva.id"
+                (click)="eliminar(reserva.id)">
+                Eliminar
+              </button>
+            </div>
           </td>
 
         </tr>
@@ -110,6 +125,15 @@
     </table>
 
   </div>
+
+  @if (errorAccion()) {
+  <div class="alert alert-danger mt-3" role="alert">
+    {{ errorAccion() }}
+    <button class="btn btn-sm btn-outline-danger ms-3" (click)="cargarReservas()">
+      Actualizar lista
+    </button>
+  </div>
+  }
 
   <div class="text-secondary mt-3">
     Total de reservas: {{ reservas().length }}

@@ -13,6 +13,7 @@ export default function FormularioAdminReserva({
   esEdicion,
   estudiantes,
   laboratorios,
+  enviando = false,
   onChange,
   onSubmit,
   onCancel,
@@ -30,6 +31,7 @@ export default function FormularioAdminReserva({
             value={datos.usuarioId}
             onChange={onChange}
             required
+            disabled={enviando}
           >
             <option value="">Selecciona un estudiante</option>
             {estudiantes.map((estudiante) => (
@@ -48,6 +50,7 @@ export default function FormularioAdminReserva({
             value={datos.laboratorioId}
             onChange={onChange}
             required
+            disabled={enviando}
           >
             <option value="">Selecciona un laboratorio</option>
             {laboratorios.map((laboratorio) => (
@@ -68,6 +71,7 @@ export default function FormularioAdminReserva({
               value={datos[nombre]}
               onChange={onChange}
               required
+              disabled={enviando}
             />
           </div>
         ))}
@@ -79,6 +83,7 @@ export default function FormularioAdminReserva({
             name="estado"
             value={datos.estado}
             onChange={onChange}
+            disabled={enviando}
           >
             {estadosReserva.map((estado) => (
               <option key={estado} value={estado}>{estado}</option>
@@ -88,8 +93,11 @@ export default function FormularioAdminReserva({
       </div>
       {error && <p className="alert alert-danger mt-3 mb-0" role="alert">{error}</p>}
       <div className="d-flex gap-2 mt-3">
-        <button type="submit" className="btn btn-primary">Guardar</button>
-        <button type="button" className="btn btn-outline-secondary" onClick={onCancel}>
+        <button type="submit" className="btn btn-primary" disabled={enviando}>
+          {enviando ? 'Guardando...' : 'Guardar'}
+        </button>
+        <button type="button" className="btn btn-outline-secondary" onClick={onCancel}
+          disabled={enviando}>
           Cancelar
         </button>
       </div>

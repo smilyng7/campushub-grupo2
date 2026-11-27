@@ -25,4 +25,8 @@ export class ReservaService {
     eliminarReserva(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
+
+    actualizarEstado(id: number, estado: Reserva['estado']): Observable<Reserva> {
+        return this.http.patch<Reserva>(`${this.apiUrl}/${id}`, { estado });
+    }
 }

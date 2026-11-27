@@ -1,25 +1,36 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import db from '../data/db.json';
+import { iniciarSesion } from '../services/reservasApi';
 
 const AuthContext = createContext(null);
+const CLAVE_USUARIO = 'campushub.usuario';
+
+function leerUsuarioGuardado() {
+  const guardado = localStorage.getItem(CLAVE_USUARIO);
+  if (!guardado) return null;
+  try {
+    const usuario = JSON.parse(guardado);
+    if (usuario && usuario.id && usuario.nombre && usuario.rol) return usuario;
+  } catch {
+    localStorage.removeItem(CLAVE_USUARIO);
+  }
+  localStorage.removeItem(CLAVE_USUARIO);
+  return null;
+}
 
 export function AuthProvider({ children }) {
-  const [usuario, setUsuario] = useState(null);
+  const [usuario, setUsuario] = useState(leerUsuarioGuardado);
 
-  const login = useCallback((codigo, password) => {
-    const cuenta = db.usuarios.find(
-      (item) => item.codigo.toLowerCase() === codigo.trim().toLowerCase()
-        && item.password === password,
-    );
-
-    if (!cuenta) return false;
-
-    const { id, nombre, correo, codigo: codigoUsuario, rol } = cuenta;
-    setUsuario({ id, nombre, correo, codigo: codigoUsuario, rol });
-    return true;
+  const login = useCallback(async (correo, password) => {
+    const cuenta = await iniciarSesion(correo, password);
+    localStorage.setItem(CLAVE_USUARIO, JSON.stringify(cuenta));
+    setUsuario(cuenta);
+    return cuenta;
   }, []);
 
-  const logout = useCallback(() => setUsuario(null), []);
+  const logout = useCallback(() => {
+    localStorage.removeItem(CLAVE_USUARIO);
+    setUsuario(null);
+  }, []);
   const value = useMemo(() => ({ usuario, login, logout }), [usuario, login, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

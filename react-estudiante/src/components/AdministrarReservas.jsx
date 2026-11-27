@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import FormularioAdminReserva from './FormularioAdminReserva';
 import TablaAdminReservas from './TablaAdminReservas';
-import { useReservas } from '../context/ReservasContext';
-import db from '../data/db.json';
+import useReservas from '../hooks/useReservas';
+import useLaboratorios from '../hooks/useLaboratorios';
+import useUsuarios from '../hooks/useUsuarios';
 import {
   crearDatosEdicion,
   formularioVacio,
@@ -10,13 +11,25 @@ import {
 } from './reservasAdmin';
 
 export default function AdministrarReservas() {
-  const { reservas, agregarReserva, actualizarReserva, eliminarReserva } = useReservas();
+  const {
+    datos: reservas,
+    cargando,
+    error: errorReservas,
+    crear,
+    cancelar,
+    actualizar,
+    guardarCambios,
+    operando,
+  } = useReservas();
+  const catalogo = useLaboratorios();
+  const usuarios = useUsuarios();
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [reservaEditando, setReservaEditando] = useState(null);
   const [datos, setDatos] = useState(formularioVacio);
   const [error, setError] = useState('');
   const [mensaje, setMensaje] = useState('');
-  const estudiantes = db.usuarios.filter((usuario) => usuario.rol === 'estudiante');
+  const [errorOperacion, setErrorOperacion] = useState('');
+  const estudiantes = usuarios.datos.filter((usuario) => usuario.rol === 'estudiante');
 
   function iniciarFormulario(reserva = null) {
     setReservaEditando(reserva?.id ?? null);
@@ -39,30 +52,56 @@ export default function AdministrarReservas() {
     setError('');
   }
 
-  function guardarReserva(evento) {
+  async function guardarReserva(evento) {
     evento.preventDefault();
-    const resultado = validarReservaAdmin(datos, reservaEditando, reservas);
+    const resultado = validarReservaAdmin(
+      datos, reservaEditando, reservas, estudiantes, catalogo.datos,
+    );
     if (resultado.error) {
       setError(resultado.error);
       return;
     }
 
-    if (reservaEditando === null) {
-      agregarReserva(resultado.cambios);
-      setMensaje('Reserva creada correctamente.');
-    } else {
-      actualizarReserva(reservaEditando, resultado.cambios);
-      setMensaje('Reserva actualizada correctamente.');
+    try {
+      if (reservaEditando === null) {
+        await crear(resultado.cambios);
+        setMensaje('Reserva creada correctamente.');
+      } else {
+        await guardarCambios(reservaEditando, resultado.cambios);
+        setMensaje('Reserva actualizada correctamente.');
+      }
+      cancelarFormulario();
+    } catch (fallo) {
+      setError(fallo.message || 'No se pudo guardar la reserva.');
     }
-    cancelarFormulario();
   }
 
-  function confirmarEliminacion(reserva) {
+  async function confirmarEliminacion(reserva) {
     if (!window.confirm(`¿Eliminar la reserva ${reserva.codigo}?`)) return;
-    eliminarReserva(reserva.id);
-    if (reservaEditando === reserva.id) cancelarFormulario();
-    setMensaje(`La reserva ${reserva.codigo} fue eliminada.`);
-    setError('');
+    try {
+      await cancelar(reserva.id);
+      if (reservaEditando === reserva.id) cancelarFormulario();
+      setMensaje(`La reserva ${reserva.codigo} fue eliminada.`);
+      setErrorOperacion('');
+    } catch (fallo) {
+      setErrorOperacion(fallo.message || 'No se pudo eliminar la reserva.');
+    }
+  }
+
+  if (cargando || catalogo.cargando || usuarios.cargando) {
+    return <p role="status">Cargando reservas y datos del API...</p>;
+  }
+
+  const errorCarga = errorReservas || catalogo.error || usuarios.error;
+  if (errorCarga) {
+    return <div className="alert alert-danger" role="alert">
+      <p>{errorCarga}</p>
+      <button type="button" className="btn btn-outline-danger" onClick={() => {
+        actualizar();
+        catalogo.actualizar();
+        usuarios.reintentar();
+      }}>Reintentar</button>
+    </div>;
   }
 
   return (
@@ -75,18 +114,21 @@ export default function AdministrarReservas() {
           type="button"
           className="btn btn-primary"
           onClick={() => iniciarFormulario()}
+          disabled={operando}
         >
           Crear reserva
         </button>
       </div>
       {mensaje && <p className="alert alert-success" role="status">{mensaje}</p>}
+      {errorOperacion && <p className="alert alert-danger" role="alert">{errorOperacion}</p>}
       {mostrarFormulario && (
         <FormularioAdminReserva
           datos={datos}
           error={error}
+          enviando={operando}
           esEdicion={reservaEditando !== null}
           estudiantes={estudiantes}
-          laboratorios={db.laboratorios}
+          laboratorios={catalogo.datos}
           onChange={cambiarCampo}
           onSubmit={guardarReserva}
           onCancel={cancelarFormulario}
@@ -94,8 +136,11 @@ export default function AdministrarReservas() {
       )}
       <TablaAdminReservas
         reservas={reservas}
+        usuarios={usuarios.datos}
+        laboratorios={catalogo.datos}
         onEdit={iniciarFormulario}
         onDelete={confirmarEliminacion}
+        operando={operando}
       />
     </>
   );

@@ -20,10 +20,6 @@ import {
   useTheme,
 } from './context/ThemeContext';
 
-import {
-  ReservasProvider,
-} from './context/ReservasContext';
-
 import Catalogo from './pages/Catalogo';
 import DetalleLaboratorio from './pages/DetalleLaboratorio';
 import Home from './pages/Home';
@@ -145,11 +141,9 @@ export default function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <ReservasProvider>
-          <BrowserRouter>
-            <Aplicacion />
-          </BrowserRouter>
-        </ReservasProvider>
+        <BrowserRouter>
+          <Aplicacion />
+        </BrowserRouter>
       </ThemeProvider>
     </AuthProvider>
   );
