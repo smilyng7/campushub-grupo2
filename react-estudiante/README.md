@@ -1,46 +1,36 @@
-# CampusHub — Portal de estudiantes
+# Portal estudiantil (React)
 
-El portal React consulta el API compartido de `api-mock`; no utiliza archivos JSON locales como fuente de datos. El administrador Angular y React trabajan contra el mismo `api-mock/db.json`.
+Este módulo ofrece el catálogo, autenticación simulada, creación de reservas e historial del estudiante. Para iniciar todo el proyecto, sigue la guía de [CampusHub](../README.md); primero debe estar activo el API de [`api-mock`](../api-mock/README.md).
 
-## Ejecución local
-
-Inicia cada aplicación en una terminal independiente desde la raíz del repositorio:
+## Desarrollo
 
 ```powershell
-cd api-mock
-npm install
-npm start
-```
-
-```powershell
-cd react-estudiante
 npm install
 npm run dev
 ```
 
-```powershell
-cd angular-admin
-npm install
-npm start
-```
+Vite muestra la URL local al iniciar (por defecto `http://localhost:5173`). Para apuntar a otro servidor, configura `VITE_API_URL`; por defecto los servicios usan `http://localhost:3000`.
 
-El API queda disponible en `http://localhost:3000`. Para cambiar la dirección usada por React, define `VITE_API_URL`.
+Credenciales de prueba:
 
-## Integración React ↔ Angular
+- Estudiante: `u20231234@utp.edu.pe` / `est123`
+- Administrador: `admin1@utp.edu.pe` / `admin123`
 
-1. Inicia el API, React y Angular.
-2. En React, inicia sesión como estudiante, crea una reserva y abre **Mis reservas**.
-3. En Angular, abre **Reservas**, localiza la nueva solicitud y pulsa **Aprobar** o **Rechazar**.
-4. Vuelve a React y pulsa **Actualizar reservas**. El historial y el resumen por estado consultan el cambio persistido por el API.
+El login consulta `GET /usuarios?correo=...` y conserva el perfil, sin contraseña, en `localStorage`. Los datos del catálogo, usuarios y reservas se consultan al API; el archivo `src/data/db.json` no es fuente de datos de la aplicación.
 
-Credenciales demo: `u20231234@utp.edu.pe` / `est123` (estudiante) y `admin1@utp.edu.pe` / `admin123` (administrador). El inicio de sesión simulado valida contra `GET /usuarios?correo=...`; el perfil, sin contraseña, se conserva en `localStorage`.
+## Clientes HTTP
 
-## Clientes HTTP utilizados
-
-| Cliente | Uso en este proyecto | Comportamiento |
+| Cliente | Uso | Implementación |
 |---|---|---|
-| Fetch API | `laboratorioFetch.js`: catálogo, detalle y reservas asociadas al detalle | `async/await`; revisa `response.ok` antes de leer JSON y propaga errores HTTP. |
-| Axios | `reservasApi.js`: login y operaciones de reservas (`GET`, `POST`, `PATCH`, `DELETE`) | Instancia con `baseURL`, timeout e interceptor de respuesta que convierte fallos HTTP/red en mensajes legibles. |
-| Alova | `resumenAlova.js` y `ResumenReservas.jsx`: resumen por estado | `useRequest`, caché de 30 segundos y actualización manual que fuerza una consulta fresca. |
+| Fetch API | Catálogo de laboratorios, detalle y reservas asociadas | `src/services/laboratorioFetch.js` usa `async/await` y comprueba `response.ok`. |
+| Axios | Login y CRUD de reservas | `src/services/reservasApi.js` define instancia con `baseURL` e interceptor para traducir errores HTTP/red. Usa `GET`, `POST`, `PATCH` y `DELETE`. |
+| Alova | Resumen del estudiante por estado | `src/services/resumenAlova.js` se consume con `useRequest`, caché y actualización manual en `src/components/ResumenReservas.jsx`. |
 
-El hook `useReservas(usuarioId)` centraliza las reservas y expone datos, estados de carga/error, creación y cancelación. Las vistas muestran estados de carga, error y lista vacía al consultar el API.
+El hook `src/hooks/useReservas.js` centraliza consulta, creación, cancelación y actualización. Las vistas presentan indicadores de carga, errores y estados vacíos.
+
+## Validación
+
+```powershell
+npm run lint
+npm run build
+```
