@@ -65,6 +65,23 @@ Credenciales simuladas para desarrollo:
 
 Para instrucciones del stack y pruebas HTTP de cada módulo, consulta su README enlazado arriba.
 
+## Comparación de frameworks
+
+| Criterio | **React** (`react-estudiante/`) | **Angular** (`angular-admin/`) | **Vue 3** (`vue-kiosko/`) | **Next.js** (`next-publico/`) |
+|---|---|---|---|---|
+| **Rol en el proyecto** | Portal estudiantil interactivo | Panel administrativo (CRUD y aprobaciones) | Kiosko de disponibilidad (grilla 2D cada 30 s) | Portal público SEO/SSR |
+| **Renderizado** | CSR (Vite) | CSR (Angular CLI) | CSR (Vite) | SSR (App Router, `cache: 'no-store'`) |
+| **Reactividad / Estado** | Hooks (`useState`, `useEffect`), Context API y `useReservas` | `signal()` y RxJS (`BehaviorSubject`, `timer`) | Composition API (`ref`, `computed`, `onMounted`/`onUnmounted`) | Server Components `async` sin estado en cliente |
+| **Comunicación** | `props` y callbacks | Inyección de dependencias (`inject(...)`) | `defineProps` y `defineEmits` | `params` de ruta y composición en servidor |
+| **Directivas / UI** | JSX, `.map()` y ternarios | `@if`, `@for`, `@empty`, `[ngClass]` | `v-model`, `v-for`, `v-if`/`v-else`, `:class`, `@click` | JSX en servidor (`Link`, `notFound()`) |
+| **Enrutamiento** | `react-router-dom` (`App.jsx`) | `@angular/router` (`app.routes.ts`) | Vista única sin router | Basado en archivos (`[id]`, `[codigo]`, `not-found.jsx`) |
+| **Consumo HTTP** | Fetch API, Axios (con interceptor) y Alova (caché) | `HttpClient` con `Observable` | `fetch` nativo con `Promise.all` | `fetch` en servidor con `cache: 'no-store'` |
+
+- **React** se usa en el portal estudiantil por la alta interactividad (filtros, formularios, rutas protegidas) y la combinación de Fetch, Axios y Alova según el caso de uso.
+- **Angular** organiza el panel administrativo con TypeScript, servicios inyectables y polling con RxJS para mantener sincronizado el dashboard y aprobar/rechazar reservas.
+- **Vue 3** resuelve el kiosko con directivas reactivas (`v-model`, `v-for`) y una matriz bidimensional recalculada con `computed` y actualizada cada 30 segundos.
+- **Next.js** renderiza en el servidor el catálogo público, el detalle por laboratorio (`[id]`) y la consulta de reserva (`[codigo]`) con metadatos dinámicos (`generateMetadata`) visibles en el HTML inicial.
+
 ## Integrantes
 
 - Cruz Quispe Evelyn Crisherat
