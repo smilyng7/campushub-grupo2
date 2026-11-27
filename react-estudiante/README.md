@@ -1,16 +1,36 @@
-# React + Vite
+# Portal estudiantil (React)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este módulo ofrece el catálogo, autenticación simulada, creación de reservas e historial del estudiante. Para iniciar todo el proyecto, sigue la guía de [CampusHub](../README.md); primero debe estar activo el API de [`api-mock`](../api-mock/README.md).
 
-Currently, two official plugins are available:
+## Desarrollo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```powershell
+npm install
+npm run dev
+```
 
-## React Compiler
+Vite muestra la URL local al iniciar (por defecto `http://localhost:5173`). Para apuntar a otro servidor, configura `VITE_API_URL`; por defecto los servicios usan `http://localhost:3000`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Credenciales de prueba:
 
-## Expanding the ESLint configuration
+- Estudiante: `u20231234@utp.edu.pe` / `est123`
+- Administrador: `admin1@utp.edu.pe` / `admin123`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+El login consulta `GET /usuarios?correo=...` y conserva el perfil, sin contraseña, en `localStorage`. Los datos del catálogo, usuarios y reservas se consultan al API; el archivo `src/data/db.json` no es fuente de datos de la aplicación.
+
+## Clientes HTTP
+
+| Cliente | Uso | Implementación |
+|---|---|---|
+| Fetch API | Catálogo de laboratorios, detalle y reservas asociadas | `src/services/laboratorioFetch.js` usa `async/await` y comprueba `response.ok`. |
+| Axios | Login y CRUD de reservas | `src/services/reservasApi.js` define instancia con `baseURL` e interceptor para traducir errores HTTP/red. Usa `GET`, `POST`, `PATCH` y `DELETE`. |
+| Alova | Resumen del estudiante por estado | `src/services/resumenAlova.js` se consume con `useRequest`, caché y actualización manual en `src/components/ResumenReservas.jsx`. |
+
+El hook `src/hooks/useReservas.js` centraliza consulta, creación, cancelación y actualización. Las vistas presentan indicadores de carga, errores y estados vacíos.
+
+## Validación
+
+```powershell
+npm run lint
+npm run build
+```

@@ -1,6 +1,5 @@
 import { Reserva } from '../../../core-js/modelos.js';
 import { esFecha, esHora } from '../../../core-js/validadores.js';
-import db from '../data/db.json';
 
 export const formularioVacio = {
   usuarioId: '',
@@ -26,11 +25,11 @@ export function crearDatosEdicion(reserva) {
   };
 }
 
-export function validarReservaAdmin(datos, reservaEditando, reservas) {
-  const estudiante = db.usuarios.find(
+export function validarReservaAdmin(datos, reservaEditando, reservas, estudiantes, laboratorios) {
+  const estudiante = estudiantes.find(
     (usuario) => usuario.rol === 'estudiante' && String(usuario.id) === datos.usuarioId
   );
-  const laboratorio = db.laboratorios.find(
+  const laboratorio = laboratorios.find(
     (item) => String(item.id) === datos.laboratorioId
   );
 

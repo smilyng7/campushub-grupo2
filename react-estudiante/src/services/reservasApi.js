@@ -27,8 +27,27 @@ reservasApi.interceptors.response.use(
 );
 
 export async function listarReservas(usuarioId, signal) {
-  const { data } = await reservasApi.get('/reservas', { params: { usuarioId }, signal });
+  const opciones = { signal };
+  if (usuarioId !== undefined && usuarioId !== null) {
+    opciones.params = { usuarioId };
+  }
+  const { data } = await reservasApi.get('/reservas', opciones);
   return data;
+}
+
+export async function listarUsuarios(signal) {
+  const { data } = await reservasApi.get('/usuarios', { signal });
+  return data;
+}
+
+export async function iniciarSesion(correo, password) {
+  const { data: usuarios } = await reservasApi.get('/usuarios', {
+    params: { correo: correo.trim().toLowerCase() },
+  });
+  const usuario = usuarios.find((cuenta) => cuenta.password === password);
+  if (!usuario) throw new Error('Correo o contraseña incorrectos.');
+  const { id, nombre, codigo, rol } = usuario;
+  return { id, nombre, correo: usuario.correo, codigo, rol };
 }
 
 export async function crearReserva(datos) {
@@ -60,9 +79,17 @@ export async function crearReserva(datos) {
     horaFin: datos.horaFin,
     motivo: datos.motivo.trim(),
     codigo: `RES-${String(ultimoCodigo + 1).padStart(4, '0')}`,
-    estado: 'pendiente',
+    estado: datos.estado ?? 'pendiente',
     creadoEn: new Date().toISOString(),
   });
+  return data;
+}
+
+export async function actualizarReserva(id, cambios) {
+  const { data } = await reservasApi.patch(
+    `/reservas/${encodeURIComponent(id)}`,
+    cambios,
+  );
   return data;
 }
 
