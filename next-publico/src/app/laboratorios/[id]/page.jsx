@@ -1,7 +1,30 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 const API_URL = 'http://localhost:3000';
+
+function obtenerRangoSemana(fecha = new Date()) {
+    const partesFecha = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Lima',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).formatToParts(fecha);
+    const anio = Number(partesFecha.find((parte) => parte.type === 'year').value);
+    const mes = Number(partesFecha.find((parte) => parte.type === 'month').value);
+    const dia = Number(partesFecha.find((parte) => parte.type === 'day').value);
+    const hoy = new Date(Date.UTC(anio, mes - 1, dia));
+    const inicio = new Date(hoy);
+    inicio.setUTCDate(hoy.getUTCDate() - ((hoy.getUTCDay() + 6) % 7));
+    const fin = new Date(inicio);
+    fin.setUTCDate(inicio.getUTCDate() + 6);
+
+    return {
+        inicio: inicio.toISOString().slice(0, 10),
+        fin: fin.toISOString().slice(0, 10),
+    };
+}
 
 async function obtenerDetalle(id) {
     const [labRes, reservasRes] = await Promise.all([
@@ -14,30 +37,28 @@ async function obtenerDetalle(id) {
     }
 
     const laboratorio = await labRes.json();
-    const reservas = reservasRes.ok ? await reservasRes.json() : [];
-    const aprobadas = reservas.filter((r) => r.estado === 'aprobada');
+    if (!reservasRes.ok) {
+        throw new Error(`No se pudieron cargar las reservas (${reservasRes.status}).`);
+    }
+
+    const reservas = await reservasRes.json();
+    const { inicio, fin } = obtenerRangoSemana();
+    const aprobadas = reservas.filter(
+        (r) => r.estado === 'aprobada' && r.fecha >= inicio && r.fecha <= fin,
+    );
 
     return { laboratorio, aprobadas };
 }
 
 export async function generateMetadata({ params }) {
     const { id } = await params;
-    const data = await obtenerDetalle(id);
-
-    if (!data) {
-        return {
-            title: 'Laboratorio no encontrado | CampusHub',
-            description: 'El laboratorio solicitado no existe en el catálogo público.',
-        };
-    }
-
     return {
-        title: `${data.laboratorio.nombre} (${data.laboratorio.sede}) | CampusHub`,
-        description: `Capacidad ${data.laboratorio.capacidad}, estado ${data.laboratorio.estado} y reservas aprobadas.`,
+        title: `Laboratorio ${id}`,
+        description: `Consulta los datos y las reservas aprobadas de esta semana para el laboratorio ${id} en CampusHub.`,
     };
 }
 
-export default async function DetalleLaboratorioPage({ params }) {
+async function DetalleLaboratorioContenido({ params }) {
     const { id } = await params;
     const data = await obtenerDetalle(id);
 
@@ -61,9 +82,9 @@ export default async function DetalleLaboratorioPage({ params }) {
             </section>
 
             <section className="rounded border p-5 space-y-3">
-                <h2 className="text-xl font-semibold">Reservas aprobadas</h2>
+                <h2 className="text-xl font-semibold">Reservas aprobadas esta semana</h2>
                 {aprobadas.length === 0 ? (
-                    <p>No hay reservas aprobadas registradas para este laboratorio.</p>
+                    <p>No hay reservas aprobadas para este laboratorio durante esta semana.</p>
                 ) : (
                     <ul className="list-disc pl-5 space-y-1">
                         {aprobadas.map((res) => (
@@ -75,5 +96,13 @@ export default async function DetalleLaboratorioPage({ params }) {
                 )}
             </section>
         </main>
+    );
+}
+
+export default function DetalleLaboratorioPage({ params }) {
+    return (
+        <Suspense fallback={<p className="p-6">Cargando información del laboratorio...</p>}>
+            <DetalleLaboratorioContenido params={params} />
+        </Suspense>
     );
 }

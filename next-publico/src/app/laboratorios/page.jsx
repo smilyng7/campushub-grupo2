@@ -1,21 +1,22 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 
 const API_URL = 'http://localhost:3000';
 
 export const metadata = {
-    title: 'Catálogo Público de Laboratorios | CampusHub',
+    title: 'Catálogo Público de Laboratorios',
     description: 'Consulta la disponibilidad, sede, capacidad y equipamiento de los laboratorios del campus.',
 };
 
 async function obtenerLaboratorios() {
     const res = await fetch(`${API_URL}/laboratorios`, { cache: 'no-store' });
     if (!res.ok) {
-        return [];
+        throw new Error(`No se pudo cargar el catálogo de laboratorios (${res.status}).`);
     }
     return res.json();
 }
 
-export default async function LaboratoriosPage() {
+async function LaboratoriosContenido() {
     const laboratorios = await obtenerLaboratorios();
 
     return (
@@ -31,7 +32,7 @@ export default async function LaboratoriosPage() {
             </div>
 
             {laboratorios.length === 0 ? (
-                <p>No hay laboratorios registrados o el API en el puerto 3000 no está activo.</p>
+                <p>No hay laboratorios registrados.</p>
             ) : (
                 <div className="grid gap-4 md:grid-cols-2">
                     {laboratorios.map((lab) => (
@@ -50,5 +51,13 @@ export default async function LaboratoriosPage() {
                 </div>
             )}
         </main>
+    );
+}
+
+export default function LaboratoriosPage() {
+    return (
+        <Suspense fallback={<p className="p-6">Cargando catálogo de laboratorios...</p>}>
+            <LaboratoriosContenido />
+        </Suspense>
     );
 }

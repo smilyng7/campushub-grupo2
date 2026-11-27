@@ -1,42 +1,29 @@
-<<<<<<< HEAD
 # Portal público (Next.js)
 
-Carpeta reservada para una posible interfaz pública con Next.js. Actualmente no contiene una aplicación ejecutable. El portal estudiantil activo para el flujo integrado es [`react-estudiante`](../react-estudiante/README.md).
-=======
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Portal de CampusHub creado con Next.js App Router. El catálogo, los detalles de
+laboratorio y la consulta de reservas se renderizan en el servidor con datos del
+API compartido.
 
-## Getting Started
+## Requisitos
 
-First, run the development server:
+- Node.js y npm
+- API de desarrollo (`api-mock`) ejecutándose en `http://localhost:3000`
+
+Inicia el API desde `api-mock` con `npm install` y `npm start`. Luego, desde esta
+carpeta, instala dependencias con `npm install` y ejecuta:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+El portal queda en `http://localhost:3001`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Rutas públicas
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/laboratorios`: catálogo de laboratorios actualizado en cada petición.
+- `/laboratorios/[id]`: información del laboratorio y reservas aprobadas de la
+  semana en curso (lunes a domingo).
+- `/reserva/[codigo]`: estado de una reserva, por ejemplo `/reserva/RES-0001`.
+  Un código inexistente devuelve una página 404.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
->>>>>>> evelyn
+Cada ruta incluye título y descripción SEO renderizados en el HTML.

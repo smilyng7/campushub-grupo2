@@ -1,19 +1,21 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 const API_URL = 'http://localhost:3000';
 
 export async function generateMetadata({ params }) {
     const { codigo } = await params;
     return {
-        title: `Reserva ${codigo} | CampusHub`,
-        description: `Consulta pública del estado de la reserva ${codigo} en CampusHub.`,
+        title: `Consulta de reserva ${codigo}`,
+        description: `Consulta si la reserva ${codigo} fue aprobada, está pendiente o fue rechazada en CampusHub.`,
     };
 }
 
 async function buscarReservaPorCodigo(codigo) {
     const res = await fetch(`${API_URL}/reservas`, { cache: 'no-store' });
     if (!res.ok) {
-        return null;
+        throw new Error(`No se pudieron consultar las reservas (${res.status}).`);
     }
     const reservas = await res.json();
     return (
@@ -23,9 +25,13 @@ async function buscarReservaPorCodigo(codigo) {
     );
 }
 
-export default async function ConsultaReservaPage({ params }) {
+async function ConsultaReservaContenido({ params }) {
     const { codigo } = await params;
     const reserva = await buscarReservaPorCodigo(codigo);
+
+    if (!reserva) {
+        notFound();
+    }
 
     return (
         <main className="mx-auto max-w-2xl p-6 space-y-6">
@@ -33,22 +39,21 @@ export default async function ConsultaReservaPage({ params }) {
                 ← Volver al inicio
             </Link>
 
-            {!reserva ? (
-                <section className="rounded border border-red-300 bg-red-50 p-5 space-y-2">
-                    <h1 className="text-xl font-bold text-red-800">Reserva no encontrada</h1>
-                    <p className="text-sm text-red-700">
-                        No se encontró ninguna reserva con el código <strong>{codigo}</strong>.
-                    </p>
-                </section>
-            ) : (
-                <section className="rounded border p-5 space-y-2">
-                    <h1 className="text-xl font-bold">Reserva {reserva.codigo}</h1>
-                    <p><strong>Estado:</strong> {reserva.estado}</p>
-                    <p><strong>Fecha:</strong> {reserva.fecha}</p>
-                    <p><strong>Horario:</strong> {reserva.horaInicio} - {reserva.horaFin}</p>
-                    <p><strong>Motivo:</strong> {reserva.motivo}</p>
-                </section>
-            )}
+            <section className="rounded border p-5 space-y-2">
+                <h1 className="text-xl font-bold">Reserva {reserva.codigo}</h1>
+                <p><strong>Estado:</strong> {reserva.estado}</p>
+                <p><strong>Fecha:</strong> {reserva.fecha}</p>
+                <p><strong>Horario:</strong> {reserva.horaInicio} - {reserva.horaFin}</p>
+                <p><strong>Motivo:</strong> {reserva.motivo}</p>
+            </section>
         </main>
+    );
+}
+
+export default function ConsultaReservaPage({ params }) {
+    return (
+        <Suspense fallback={<p className="p-6">Consultando estado de la reserva...</p>}>
+            <ConsultaReservaContenido params={params} />
+        </Suspense>
     );
 }
