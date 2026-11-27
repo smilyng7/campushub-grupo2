@@ -1,7 +1,6 @@
-import { Suspense } from 'react';
 import Link from 'next/link';
 
-const API_URL = 'http://localhost:3000';
+const API_URL = process.env.API_URL || 'http://localhost:3000';
 
 export const metadata = {
     title: 'Catálogo Público de Laboratorios',
@@ -16,7 +15,7 @@ async function obtenerLaboratorios() {
     return res.json();
 }
 
-async function LaboratoriosContenido() {
+export default async function LaboratoriosContenido() {
     const laboratorios = await obtenerLaboratorios();
 
     return (
@@ -54,10 +53,3 @@ async function LaboratoriosContenido() {
     );
 }
 
-export default function LaboratoriosPage() {
-    return (
-        <Suspense fallback={<p className="p-6">Cargando catálogo de laboratorios...</p>}>
-            <LaboratoriosContenido />
-        </Suspense>
-    );
-}

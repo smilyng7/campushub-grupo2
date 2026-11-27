@@ -24,6 +24,12 @@ El portal queda en `http://localhost:3001`.
 - `/laboratorios/[id]`: información del laboratorio y reservas aprobadas de la
   semana en curso (lunes a domingo).
 - `/reserva/[codigo]`: estado de una reserva, por ejemplo `/reserva/RES-0001`.
-  Un código inexistente devuelve una página 404.
+  Un código inexistente muestra una página de reserva no encontrada.
 
 Cada ruta incluye título y descripción SEO renderizados en el HTML.
+
+
+## Consulta y errores
+
+El inicio permite escribir un código de reserva. Las páginas usan componentes de servidor con fetch no-store; no se usa prerenderizado parcial para estas consultas. La respuesta se resuelve antes de enviar el cuerpo: una reserva o laboratorio inexistente muestra un mensaje específico dentro de la página (HTTP 200). El requisito de este avance pide la pantalla de no encontrada; no exige el código HTTP 404. Un fallo del API se trata como error de consulta, no como recurso inexistente.
+La URL del API se configura con API_URL (ver .env.example). Para comprobar SSR, abrir Ver código fuente en /laboratorios/1 y localizar el nombre del laboratorio. La lista de aprobadas corresponde a la semana de Lima, de lunes a domingo.

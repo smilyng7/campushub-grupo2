@@ -1,8 +1,7 @@
-import { Suspense } from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import ReservaNotFound from './not-found';
 
-const API_URL = 'http://localhost:3000';
+const API_URL = process.env.API_URL || 'http://localhost:3000';
 
 export async function generateMetadata({ params }) {
     const { codigo } = await params;
@@ -25,12 +24,12 @@ async function buscarReservaPorCodigo(codigo) {
     );
 }
 
-async function ConsultaReservaContenido({ params }) {
+export default async function ConsultaReservaContenido({ params }) {
     const { codigo } = await params;
     const reserva = await buscarReservaPorCodigo(codigo);
 
     if (!reserva) {
-        notFound();
+        return <ReservaNotFound />;
     }
 
     return (
@@ -50,10 +49,3 @@ async function ConsultaReservaContenido({ params }) {
     );
 }
 
-export default function ConsultaReservaPage({ params }) {
-    return (
-        <Suspense fallback={<p className="p-6">Consultando estado de la reserva...</p>}>
-            <ConsultaReservaContenido params={params} />
-        </Suspense>
-    );
-}

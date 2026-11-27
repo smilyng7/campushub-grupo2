@@ -3,6 +3,8 @@
   <div class="mb-4">
     <span class="text-primary fw-bold">GESTIÓN ACADÉMICA</span>
     <h2 class="mt-2">Reservas</h2>
+    <button type="button" class="btn btn-outline-primary" (click)="cargarReservas()"
+      [disabled]="cargando() || actualizandoId() !== null">Actualizar reservas</button>
     <p class="text-secondary">
       Consulta las solicitudes de uso de los espacios universitarios.
     </p>

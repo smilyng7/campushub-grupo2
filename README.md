@@ -20,9 +20,11 @@ El flujo principal es: un estudiante consulta el catálogo y crea una reserva en
 |---|---|---|
 | [`api-mock/`](./api-mock/) | API REST compartida y persistencia de desarrollo en `db.json` | [`api-mock/README.md`](./api-mock/README.md) |
 | [`react-estudiante/`](./react-estudiante/) | Portal estudiantil: catálogo, login y reservas | [`react-estudiante/README.md`](./react-estudiante/README.md) |
-| [`angular-admin/`](./angular-admin/) | Panel administrativo para gestionar laboratorios y reservas | [`angular-admin/README.md`](./angular-admin/README.md) |
+| [`angular-admin/`](./angular-admin/) | Panel administrativo para gestionar laboratorios y reservas | [`angular-admin/readme.md`](./angular-admin/readme.md) |
 | [`core-js/`](./core-js/) | Modelos, validadores y funciones de dominio reutilizadas | Incluido en la guía de React |
-| `api-express/`, `next-publico/`, `vue-kiosko/` | Carpetas reservadas para alternativas/prototipos; no forman parte del flujo principal actual | README de cada carpeta |
+| `vue-kiosko/` | Disponibilidad diaria, filtros y actualización cada 30 s | `vue-kiosko/readme.md` |
+| `next-publico/` | Catálogo, detalle SSR y consulta por código | `next-publico/readme.md` |
+| `api-express/` | Backend pendiente del avance 5 | No se requiere para los avances 3 y 4 |
 
 ## Ejecutar el flujo principal
 
@@ -65,26 +67,58 @@ Credenciales simuladas para desarrollo:
 
 Para instrucciones del stack y pruebas HTTP de cada módulo, consulta su README enlazado arriba.
 
-## Comparación de frameworks
-
-| Criterio | **React** (`react-estudiante/`) | **Angular** (`angular-admin/`) | **Vue 3** (`vue-kiosko/`) | **Next.js** (`next-publico/`) |
-|---|---|---|---|---|
-| **Rol en el proyecto** | Portal estudiantil interactivo | Panel administrativo (CRUD y aprobaciones) | Kiosko de disponibilidad (grilla 2D cada 30 s) | Portal público SEO/SSR |
-| **Renderizado** | CSR (Vite) | CSR (Angular CLI) | CSR (Vite) | SSR (App Router, `cache: 'no-store'`) |
-| **Reactividad / Estado** | Hooks (`useState`, `useEffect`), Context API y `useReservas` | `signal()` y RxJS (`BehaviorSubject`, `timer`) | Composition API (`ref`, `computed`, `onMounted`/`onUnmounted`) | Server Components `async` sin estado en cliente |
-| **Comunicación** | `props` y callbacks | Inyección de dependencias (`inject(...)`) | `defineProps` y `defineEmits` | `params` de ruta y composición en servidor |
-| **Directivas / UI** | JSX, `.map()` y ternarios | `@if`, `@for`, `@empty`, `[ngClass]` | `v-model`, `v-for`, `v-if`/`v-else`, `:class`, `@click` | JSX en servidor (`Link`, `notFound()`) |
-| **Enrutamiento** | `react-router-dom` (`App.jsx`) | `@angular/router` (`app.routes.ts`) | Vista única sin router | Basado en archivos (`[id]`, `[codigo]`, `not-found.jsx`) |
-| **Consumo HTTP** | Fetch API, Axios (con interceptor) y Alova (caché) | `HttpClient` con `Observable` | `fetch` nativo con `Promise.all` | `fetch` en servidor con `cache: 'no-store'` |
-
-- **React** se usa en el portal estudiantil por la alta interactividad (filtros, formularios, rutas protegidas) y la combinación de Fetch, Axios y Alova según el caso de uso.
-- **Angular** organiza el panel administrativo con TypeScript, servicios inyectables y polling con RxJS para mantener sincronizado el dashboard y aprobar/rechazar reservas.
-- **Vue 3** resuelve el kiosko con directivas reactivas (`v-model`, `v-for`) y una matriz bidimensional recalculada con `computed` y actualizada cada 30 segundos.
-- **Next.js** renderiza en el servidor el catálogo público, el detalle por laboratorio (`[id]`) y la consulta de reserva (`[codigo]`) con metadatos dinámicos (`generateMetadata`) visibles en el HTML inicial.
-
 ## Integrantes
 
 - Cruz Quispe Evelyn Crisherat
 - España Peña, Alfred Benjamin
 - Apolinarez Salvatierra Alex Estefano
 - Paucar Quispe Piero Israel
+
+
+## Avance 4: ejecutar las otras dos interfaces
+
+Con el API iniciado, abrir una terminal en `vue-kiosko`, ejecutar `npm ci` y `npm run dev` (puerto 5174).
+En otra terminal, dentro de `next-publico`, ejecutar `npm ci` y `npm run dev` (puerto 3001).
+En PowerShell se puede usar `npm.cmd` si la política de scripts bloquea `npm.ps1`.
+Usar una versión reciente de Node.js LTS compatible con las dependencias del lockfile.
+
+## Comparación de frameworks basada en este código
+
+| Aspecto | Angular | React | Vue | Next.js |
+|---|---|---|---|---|
+| Estructura y aprendizaje | Componentes TypeScript, inyección y servicios; requiere entender providers y Observables | JSX y hooks; hay que coordinar efectos, estados y dependencias | SFC con script/template/style; ref y computed separan estado y derivados | Comparte React, pero distingue servidor y cliente; params se espera con await |
+| Estado | Signals en ReservasLista; servicio HttpClient | useReservas organiza carga y operaciones; Context conserva sesión | useDisponibilidad conserva datos; computed genera la matriz y el filtro | Las páginas consultan en servidor; solo el buscador utiliza estado en cliente |
+| Enrutamiento | app.routes.ts y routerLink | React Router con rutas protegidas | Una pantalla pública, no necesita router | Carpetas App Router con [id] y [codigo] |
+| Renderizado | SPA en navegador | SPA en navegador | SPA en navegador | SSR por petición con fetch no-store para datos públicos |
+| Actualización | Botón Actualizar reservas y PATCH de estado | Botón de actualización y caché Alova invalidada | Consulta cada 30 segundos; limpia intervalo al desmontar | Una nueva petición a la página consulta datos actuales |
+| Ejemplo para explicar | ReservaService.actualizarEstado | Interceptor de reservasApi y useReservas | Props/emit de CeldaHorario y matriz de core-js | HTML de /laboratorios/1 ya contiene el laboratorio |
+
+El equipo debe complementar la columna de aprendizaje con su experiencia al ensayar y explicar estas diferencias con los archivos abiertos.
+
+## Prueba conjunta de los avances 3 y 4
+
+1. Iniciar API, Angular, React, Vue y Next en sus cinco puertos.
+2. En React, iniciar sesión como estudiante y crear una reserva para **hoy**, en un laboratorio disponible, entre 07:00 y 22:00, sin cruce.
+3. En Angular, pulsar Actualizar reservas y aprobar la solicitud pendiente.
+4. En React, pulsar Actualizar reservas: comprobar estado y resumen.
+5. En Vue, esperar hasta 30 segundos o pulsar Actualizar ahora: la franja pasa a ocupada. Pulsarla y revisar el código y horas exactas.
+6. En Next, consultar el código desde el formulario de inicio. Abrir el detalle del laboratorio y usar Ver código fuente para localizar su nombre y reservas aprobadas de la semana.
+7. Probar un código inexistente: se muestra Reserva no encontrada. Cancelar la solicitud en React y actualizar las demás vistas.
+8. Detener temporalmente el API y comprobar los mensajes de error y la recuperación al iniciarlo.
+
+Los datos originales incluyen fechas históricas; Vue muestra el día actual y Next solo las aprobadas de la semana. No se cambiaron las reservas originales: crear datos de demostración para el día de la exposición.
+
+## Validación y límites
+
+- core-js: `node --test` (28 casos).
+- Vue: `npm test` (4 pruebas de componentes, filtro, selección, recuperación y temporizador) y `npm run build`.
+- React: `npm run lint` y `npm run build`.
+- Angular: `npm test -- --watch=false` (12 pruebas) y `npm run build`.
+- Next: `npm run lint` y `npm run build`. Se verifican rutas existentes y no encontradas por HTTP y contenido SSR.
+
+Las pruebas de componentes utilizan DOM simulado. El ensayo visual completo en las cinco interfaces queda a cargo del equipo antes de sustentar. Angular mantiene una advertencia de tamaño del bundle, que no impide compilar.
+La autenticación es simulada y el API es json-server, como corresponde a estos avances. Las reglas y permisos del servidor con JWT corresponden al avance 5. La validación previa a crear en React no evita por sí sola solicitudes simultáneas de dos navegadores; el backend final deberá resolver esa concurrencia.
+
+## Asistencia y participación
+
+Se utilizó asistencia de IA para desarrollar y revisar código, pruebas y documentación. Cada integrante debe comprender y poder explicar su contribución. Hacer commits reales con la cuenta de cada autor y crear las etiquetas avance-3 y avance-4 cuando el equipo confirme la versión final. Esta entrega no crea commits ni publica cambios en GitHub.

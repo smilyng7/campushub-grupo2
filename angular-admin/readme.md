@@ -21,3 +21,5 @@ En **Reservas**, el panel consulta las solicitudes del API. Las reservas pendien
 npm run build
 npm test -- --watch=false --include=src/app/components/reservas-lista/reservas-lista.spec.ts
 ```
+
+El botón **Actualizar reservas** permite consultar solicitudes creadas desde React sin recargar el navegador. Las pruebas se ejecutan con `npm test -- --watch=false`.

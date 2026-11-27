@@ -1,3 +1,4 @@
+import BuscarReserva from '../components/BuscarReserva';
 import Link from "next/link";
 
 export const metadata = {
@@ -20,10 +21,9 @@ export default function HomePage() {
         >
           Ver laboratorios
         </Link>
-        <Link href="/reserva/RES-0001" className="rounded border px-4 py-2">
-          Consultar una reserva
-        </Link>
+
       </div>
+      <BuscarReserva />
     </main>
   );
 }

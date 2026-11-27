@@ -1,8 +1,7 @@
-import { Suspense } from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import NoEncontrado from '../../not-found';
 
-const API_URL = 'http://localhost:3000';
+const API_URL = process.env.API_URL || 'http://localhost:3000';
 
 function obtenerRangoSemana(fecha = new Date()) {
     const partesFecha = new Intl.DateTimeFormat('en-US', {
@@ -32,9 +31,8 @@ async function obtenerDetalle(id) {
         fetch(`${API_URL}/reservas?laboratorioId=${id}`, { cache: 'no-store' }),
     ]);
 
-    if (!labRes.ok) {
-        return null;
-    }
+    if (labRes.status === 404) return null;
+    if (!labRes.ok) throw new Error(`No se pudo consultar el laboratorio (${labRes.status}).`);
 
     const laboratorio = await labRes.json();
     if (!reservasRes.ok) {
@@ -58,12 +56,12 @@ export async function generateMetadata({ params }) {
     };
 }
 
-async function DetalleLaboratorioContenido({ params }) {
+export default async function DetalleLaboratorioContenido({ params }) {
     const { id } = await params;
     const data = await obtenerDetalle(id);
 
     if (!data) {
-        notFound();
+        return <NoEncontrado />;
     }
 
     const { laboratorio, aprobadas } = data;
@@ -99,10 +97,3 @@ async function DetalleLaboratorioContenido({ params }) {
     );
 }
 
-export default function DetalleLaboratorioPage({ params }) {
-    return (
-        <Suspense fallback={<p className="p-6">Cargando información del laboratorio...</p>}>
-            <DetalleLaboratorioContenido params={params} />
-        </Suspense>
-    );
-}
