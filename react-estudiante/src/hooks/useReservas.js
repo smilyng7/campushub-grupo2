@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { cancelarReserva, crearReserva, listarReservas } from '../services/reservasApi';
+import {
+  actualizarReserva as guardarCambiosReserva,
+  cancelarReserva,
+  crearReserva,
+  listarReservas,
+} from '../services/reservasApi';
 import { invalidarResumen } from '../services/resumenAlova';
 
 export default function useReservas(usuarioId) {
@@ -42,10 +47,15 @@ export default function useReservas(usuarioId) {
     ocupado.current = true;
     setOperando(true);
     try {
-      const guardada = await crearReserva({ ...nueva, usuarioId });
+      const guardada = await crearReserva({
+        ...nueva,
+        usuarioId: usuarioId ?? nueva.usuarioId,
+      });
       setDatos(actuales => [...actuales, guardada]);
       // La reserva ya está guardada aunque falle una actualización de caché.
-      await invalidarResumen(usuarioId).catch(() => {});
+      if (usuarioId !== undefined && usuarioId !== null) {
+        await invalidarResumen(usuarioId).catch(() => {});
+      }
       setRevision(valor => valor + 1);
       return guardada;
     } finally {
@@ -66,7 +76,9 @@ export default function useReservas(usuarioId) {
     try {
       await cancelarReserva(id);
       setDatos(actuales => actuales.filter(reserva => String(reserva.id) !== String(id)));
-      await invalidarResumen(usuarioId).catch(() => {});
+      if (usuarioId !== undefined && usuarioId !== null) {
+        await invalidarResumen(usuarioId).catch(() => {});
+      }
       setRevision(valor => valor + 1);
     } finally {
       ocupado.current = false;
@@ -74,5 +86,35 @@ export default function useReservas(usuarioId) {
     }
   }
 
-  return { datos, cargando, error, crear, cancelar, actualizar, revision, operando };
+  async function guardarCambios(id, cambios) {
+    if (ocupado.current) throw new Error('Espera a que termine la operación actual.');
+    ocupado.current = true;
+    setOperando(true);
+    try {
+      const guardada = await guardarCambiosReserva(id, cambios);
+      setDatos(actuales => actuales.map(reserva =>
+        String(reserva.id) === String(id) ? guardada : reserva
+      ));
+      if (usuarioId !== undefined && usuarioId !== null) {
+        await invalidarResumen(usuarioId).catch(() => {});
+      }
+      setRevision(valor => valor + 1);
+      return guardada;
+    } finally {
+      ocupado.current = false;
+      setOperando(false);
+    }
+  }
+
+  return {
+    datos,
+    cargando,
+    error,
+    crear,
+    cancelar,
+    actualizar,
+    guardarCambios,
+    revision,
+    operando,
+  };
 }

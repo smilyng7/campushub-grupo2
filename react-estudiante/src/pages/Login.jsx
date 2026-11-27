@@ -3,33 +3,37 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
-  const [codigo, setCodigo] = useState('');
+  const [correo, setCorreo] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [cargando, setCargando] = useState(false);
   const { login } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!login(codigo, password)) {
-      setError('Código o contraseña incorrectos.');
-      return;
+    setError('');
+    setCargando(true);
+    try {
+      await login(correo, password);
+      const destino = location.state?.from || '/mis-reservas';
+      navigate(destino, { replace: true });
+    } catch (fallo) {
+      setError(fallo.message || 'No se pudo iniciar sesión.');
+    } finally {
+      setCargando(false);
     }
-
-    const destino = location.state?.from || '/mis-reservas';
-    navigate(destino, { replace: true });
   };
 
   const handleAutocompletarDemo = () => {
     setError('');
-    // Alterna entre credencial de administrador y estudiante si ya está lleno
-    if (!codigo || codigo.toUpperCase() === 'U20231234') {
-      setCodigo('A01');
+    if (!correo || correo.toLowerCase() === 'u20231234@utp.edu.pe') {
+      setCorreo('admin1@utp.edu.pe');
       setPassword('admin123');
     } else {
-      setCodigo('U20231234');
+      setCorreo('u20231234@utp.edu.pe');
       setPassword('est123');
     }
   };
@@ -70,27 +74,27 @@ export default function Login() {
             </div>
 
             <form onSubmit={handleSubmit} noValidate>
-              {/* Campo: Código de Estudiante */}
+              {/* Campo: Correo institucional */}
               <div className="mb-3">
-                <label htmlFor="codigo" className="form-label fw-semibold small text-body mb-1">
-                  Código de Laboratorio
+                <label htmlFor="correo" className="form-label fw-semibold small text-body mb-1">
+                  Correo institucional
                 </label>
                 <div className="login-input-group">
-                  <span className="login-input-icon" role="img" aria-label="código">
-                    🎓
+                  <span className="login-input-icon" role="img" aria-label="correo">
+                    @
                   </span>
                   <input
-                    id="codigo"
-                    type="text"
+                    id="correo"
+                    type="email"
                     className="login-input-control"
-                    placeholder="Ingresar codigo"
-                    value={codigo}
+                    placeholder="nombre@utp.edu.pe"
+                    value={correo}
                     onChange={(e) => {
-                      setCodigo(e.target.value);
+                      setCorreo(e.target.value);
                       if (error) setError('');
                     }}
                     required
-                    autoComplete="username"
+                    autoComplete="email"
                   />
                 </div>
               </div>
@@ -148,8 +152,9 @@ export default function Login() {
               )}
 
               {/* Botón de envío */}
-              <button type="submit" className="btn btn-primary w-100 login-submit-btn mt-3">
-                Entrar al Portal
+              <button type="submit" className="btn btn-primary w-100 login-submit-btn mt-3"
+                disabled={cargando}>
+                {cargando ? 'Ingresando...' : 'Entrar al Portal'}
               </button>
 
               {/* Botón rápido para credenciales de demostración */}

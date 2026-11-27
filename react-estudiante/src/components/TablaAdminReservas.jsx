@@ -1,9 +1,9 @@
-import db from '../data/db.json';
-
-export default function TablaAdminReservas({ reservas, onEdit, onDelete }) {
-  const usuariosPorId = new Map(db.usuarios.map((usuario) => [usuario.id, usuario]));
+export default function TablaAdminReservas({
+  reservas, usuarios, laboratorios, onEdit, onDelete, operando,
+}) {
+  const usuariosPorId = new Map(usuarios.map((usuario) => [String(usuario.id), usuario]));
   const laboratoriosPorId = new Map(
-    db.laboratorios.map((laboratorio) => [laboratorio.id, laboratorio])
+    laboratorios.map((laboratorio) => [String(laboratorio.id), laboratorio])
   );
 
   if (reservas.length === 0) {
@@ -29,8 +29,8 @@ export default function TablaAdminReservas({ reservas, onEdit, onDelete }) {
           {reservas.map((reserva) => (
             <tr key={reserva.id}>
               <td>{reserva.codigo}</td>
-              <td>{usuariosPorId.get(reserva.usuarioId)?.nombre || `Usuario #${reserva.usuarioId}`}</td>
-              <td>{laboratoriosPorId.get(reserva.laboratorioId)?.nombre || `Laboratorio #${reserva.laboratorioId}`}</td>
+              <td>{usuariosPorId.get(String(reserva.usuarioId))?.nombre || `Usuario #${reserva.usuarioId}`}</td>
+              <td>{laboratoriosPorId.get(String(reserva.laboratorioId))?.nombre || `Laboratorio #${reserva.laboratorioId}`}</td>
               <td>{reserva.fecha}</td>
               <td>{reserva.horaInicio} - {reserva.horaFin}</td>
               <td>{reserva.motivo}</td>
@@ -51,6 +51,7 @@ export default function TablaAdminReservas({ reservas, onEdit, onDelete }) {
                     type="button"
                     className="btn btn-sm btn-outline-primary"
                     onClick={() => onEdit(reserva)}
+                    disabled={operando}
                     aria-label={`Editar ${reserva.codigo}`}
                   >
                     Editar
@@ -59,6 +60,7 @@ export default function TablaAdminReservas({ reservas, onEdit, onDelete }) {
                     type="button"
                     className="btn btn-sm btn-outline-danger"
                     onClick={() => onDelete(reserva)}
+                    disabled={operando}
                     aria-label={`Eliminar ${reserva.codigo}`}
                   >
                     Eliminar
