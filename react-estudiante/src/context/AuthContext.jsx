@@ -2,9 +2,19 @@ import { createContext, useCallback, useContext, useMemo, useState } from 'react
 import db from '../data/db.json';
 
 const AuthContext = createContext(null);
+const STORAGE_KEY = 'campushub_usuario';
+
+function leerUsuarioGuardado() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
 
 export function AuthProvider({ children }) {
-  const [usuario, setUsuario] = useState(null);
+  const [usuario, setUsuario] = useState(leerUsuarioGuardado);
 
   const login = useCallback((codigo, password) => {
     const cuenta = db.usuarios.find(
@@ -15,17 +25,23 @@ export function AuthProvider({ children }) {
     if (!cuenta) return false;
 
     const { id, nombre, correo, codigo: codigoUsuario, rol } = cuenta;
-    setUsuario({ id, nombre, correo, codigo: codigoUsuario, rol });
+    const sesion = { id, nombre, correo, codigo: codigoUsuario, rol };
+    setUsuario(sesion);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sesion));
     return true;
   }, []);
 
-  const logout = useCallback(() => setUsuario(null), []);
+  const logout = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    setUsuario(null);
+  }, []);
+
   const value = useMemo(() => ({ usuario, login, logout }), [usuario, login, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
+
 export function useAuth() {
   const context = useContext(AuthContext);
 
