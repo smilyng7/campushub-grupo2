@@ -38,11 +38,14 @@ export default function FormularioReserva({
   const [datos, setDatos] = useState({ ...vacio, laboratorioId: laboratorioInicial });
   const [revisado, setRevisado] = useState(false);
   const [guardado, setGuardado] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [errorEnvio, setErrorEnvio] = useState('');
+  const envioEnCurso = useRef(false);
   const primero = useRef(null);
   const laboratorio = laboratorios.find(lab => String(lab.id) === datos.laboratorioId);
   const errores = revisado ? validar(datos, laboratorio, reservas) : {};
 
-  useEffect(() => { primero.current?.focus(); }, []);
+  useEffect(() => { if (!enviando) primero.current?.focus(); }, [enviando]);
 
   function cambiar(evento) {
     const { name, value } = evento.target;
@@ -50,15 +53,26 @@ export default function FormularioReserva({
     setGuardado(false);
   }
 
-  function guardar(evento) {
+  async function guardar(evento) {
     evento.preventDefault();
+    if (envioEnCurso.current) return;
+    setGuardado(false);
+    setErrorEnvio('');
     setRevisado(true);
     if (Object.keys(validar(datos, laboratorio, reservas)).length) return;
-    onGuardar({ ...datos, laboratorioId: laboratorio.id, usuarioId, motivo: datos.motivo.trim() });
-    setDatos(vacio);
-    setRevisado(false);
-    setGuardado(true);
-    primero.current?.focus();
+    envioEnCurso.current = true;
+    setEnviando(true);
+    try {
+      await onGuardar({ ...datos, laboratorioId: laboratorio.id, usuarioId, motivo: datos.motivo.trim() });
+      setDatos(vacio);
+      setRevisado(false);
+      setGuardado(true);
+    } catch (fallo) {
+      setErrorEnvio(fallo.message || 'No se pudo guardar la reserva.');
+    } finally {
+      envioEnCurso.current = false;
+      setEnviando(false);
+    }
   }
 
   return (
@@ -66,7 +80,7 @@ export default function FormularioReserva({
       {campos.map(([nombre, etiqueta, tipo]) => {
         const error = errores[nombre];
         const control = {
-          id: nombre, name: nombre, value: datos[nombre], onChange: cambiar, required: true,
+          id: nombre, name: nombre, value: datos[nombre], onChange: cambiar, required: true, disabled: enviando,
           className: (tipo === 'select' ? 'form-select' : 'form-control') + (error ? ' is-invalid' : ''),
           'aria-invalid': Boolean(error), 'aria-describedby': error ? nombre + '-error' : undefined,
         };
@@ -87,7 +101,10 @@ export default function FormularioReserva({
           </div>
         );
       })}
-      <button className="btn btn-primary align-self-start">Guardar reserva</button>
+      {errorEnvio && <p className="alert alert-danger" role="alert">{errorEnvio}</p>}
+      <button disabled={enviando} className="btn btn-primary align-self-start">
+        {enviando ? 'Guardando...' : 'Guardar reserva'}
+      </button>
       {guardado && <p className="text-success mt-3 mb-0" role="status">Reserva registrada.</p>}
     </form>
   );

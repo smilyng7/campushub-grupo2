@@ -17,13 +17,13 @@ export default function Home() {
   return (
     <div className="container py-4">
       {/* Hero Section con llamada a la acción */}
-      <div className="p-4 p-md-5 mb-4 rounded-3 bg-light border shadow-sm">
+      <div className="p-4 p-md-5 mb-4 rounded-3 bg-body-tertiary border shadow-sm home-hero-card">
         <div className="container-fluid py-2">
           <span className="badge bg-primary mb-2">
             {esAdmin ? 'Panel administrativo' : 'Portal Estudiantil'}
           </span>
-          <h1 className="display-6 fw-bold">Bienvenido a CampusHub Labs</h1>
-          <p className="col-md-9 fs-5 text-muted">
+          <h1 className="display-6 fw-bold text-body">Bienvenido a CampusHub Labs</h1>
+          <p className="col-md-9 fs-5 text-body-secondary">
             Gestiona tus reservas de laboratorios y salas de cómputo en el campus de forma rápida y sencilla.
           </p>
           <div className="d-flex flex-wrap gap-2 pt-2">
@@ -42,10 +42,10 @@ export default function Home() {
       {/* Tarjetas de Accesos Rápidos */}
       <div className="row g-4 mb-4">
         <div className={esAdmin ? 'col-md-6' : 'col-md-4'}>
-          <div className="card h-100 shadow-sm border-0">
+          <div className="card h-100 shadow-sm border">
             <div className="card-body d-flex flex-column">
-              <h5 className="card-title fw-bold">Catálogo Completo</h5>
-              <p className="card-text text-muted flex-grow-1">
+              <h5 className="card-title fw-bold text-body">Catálogo Completo</h5>
+              <p className="card-text text-body-secondary flex-grow-1">
                 Revisa sedes, capacidades y el equipamiento especializado disponible para cada laboratorio.
               </p>
               <Link to="/catalogo" className="btn btn-outline-primary mt-2">
@@ -57,10 +57,10 @@ export default function Home() {
 
         {!esAdmin && (
           <div className="col-md-4">
-            <div className="card h-100 shadow-sm border-0">
+            <div className="card h-100 shadow-sm border">
               <div className="card-body d-flex flex-column">
-                <h5 className="card-title fw-bold">Reservar Espacio</h5>
-                <p className="card-text text-muted flex-grow-1">
+                <h5 className="card-title fw-bold text-body">Reservar Espacio</h5>
+                <p className="card-text text-body-secondary flex-grow-1">
                   Selecciona fecha, horario y motivo de tu práctica académica sin cruces de horarios.
                 </p>
                 <Link to="/nueva-reserva" className="btn btn-outline-success mt-2">
@@ -72,12 +72,12 @@ export default function Home() {
         )}
 
         <div className={esAdmin ? 'col-md-6' : 'col-md-4'}>
-          <div className="card h-100 shadow-sm border-0">
+          <div className="card h-100 shadow-sm border">
             <div className="card-body d-flex flex-column">
-              <h5 className="card-title fw-bold">
+              <h5 className="card-title fw-bold text-body">
                 {esAdmin ? 'Administrar Reservas' : 'Mis Reservas'}
               </h5>
-              <p className="card-text text-muted flex-grow-1">
+              <p className="card-text text-body-secondary flex-grow-1">
                 {esAdmin
                   ? 'Consulta y gestiona el historial completo de reservas.'
                   : 'Consulta el estado de tus solicitudes (pendiente, aprobada o rechazada) y tu cuenta regresiva.'}
