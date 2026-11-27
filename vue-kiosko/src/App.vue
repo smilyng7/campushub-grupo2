@@ -1,36 +1,56 @@
+
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+
 import FiltrosKiosko from './components/FiltrosKiosko.vue';
 import GrillaDisponibilidad from './components/GrillaDisponibilidad.vue';
+
 import { Reserva } from '../../core-js/modelos.js';
 import { sedesUnicas } from '../../core-js/estadisticas.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const INTERVALO_MS = 30000;
 
-const FRANJAS = [
-  { inicio: '08:00', fin: '10:00', etiqueta: '08:00 - 10:00' },
-  { inicio: '10:00', fin: '12:00', etiqueta: '10:00 - 12:00' },
-  { inicio: '12:00', fin: '14:00', etiqueta: '12:00 - 14:00' },
-  { inicio: '14:00', fin: '16:00', etiqueta: '14:00 - 16:00' },
-  { inicio: '16:00', fin: '18:00', etiqueta: '16:00 - 18:00' },
-  { inicio: '18:00', fin: '20:00', etiqueta: '18:00 - 20:00' },
-];
+// Horarios desde las 07:00 hasta las 22:00
+const FRANJAS = Array.from({ length: 15 }, (_, i) => {
+  const horaInicio = 7 + i;
+  const horaFin = horaInicio + 1;
 
+  const inicio = `${String(horaInicio).padStart(2, '0')}:00`;
+  const fin = `${String(horaFin).padStart(2, '0')}:00`;
+
+  return {
+    inicio,
+    fin,
+    etiqueta: `${inicio} - ${fin}`,
+  };
+});
+
+// Estados reactivos
 const laboratorios = ref([]);
 const reservas = ref([]);
+
 const cargando = ref(true);
 const error = ref('');
 const ultimaActualizacion = ref('');
 const seleccion = ref(null);
 
+// Filtros
 const busqueda = ref('');
 const sede = ref('Todas');
-const fecha = ref(new Date().toISOString().slice(0, 10));
+
+const obtenerFechaActual = () => {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Lima',
+  }).format(new Date());
+};
+
+const fecha = ref(obtenerFechaActual());
 const soloDisponibles = ref(false);
 
 let timerId = null;
 
+// Consultar API REST
 async function cargarDatos() {
   try {
     cargando.value = true;
@@ -41,35 +61,64 @@ async function cargarDatos() {
       fetch(`${API_URL}/reservas`),
     ]);
 
-    if (!resLabs.ok || !resReservas.ok) {
-      throw new Error('No se pudo consultar la disponibilidad desde el API.');
+    if (!resLabs.ok) {
+      throw new Error(
+        `Error al consultar laboratorios: ${resLabs.status}`
+      );
     }
 
-    laboratorios.value = await resLabs.json();
-    reservas.value = await resReservas.json();
-    ultimaActualizacion.value = new Date().toLocaleTimeString('es-PE', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
+    if (!resReservas.ok) {
+      throw new Error(
+        `Error al consultar reservas: ${resReservas.status}`
+      );
+    }
+
+    const datosLaboratorios = await resLabs.json();
+    const datosReservas = await resReservas.json();
+
+    if (!Array.isArray(datosLaboratorios) ||
+        !Array.isArray(datosReservas)) {
+      throw new Error('El API devolvió datos con formato incorrecto.');
+    }
+
+    laboratorios.value = datosLaboratorios;
+    reservas.value = datosReservas;
+
+    ultimaActualizacion.value =
+      new Date().toLocaleTimeString('es-PE');
+
   } catch (err) {
-    error.value = err.message || 'Error de conexión con el servidor.';
+    error.value =
+      err.message || 'Error de conexión con el servidor.';
   } finally {
     cargando.value = false;
   }
 }
 
+// Ciclo de vida de Vue
 onMounted(() => {
   cargarDatos();
-  timerId = setInterval(cargarDatos, INTERVALO_MS);
+
+  timerId = setInterval(() => {
+    cargarDatos();
+  }, INTERVALO_MS);
 });
 
+// Limpiar intervalo al desmontar
 onUnmounted(() => {
-  if (timerId) clearInterval(timerId);
+  if (timerId !== null) {
+    clearInterval(timerId);
+    timerId = null;
+  }
 });
 
-const sedes = computed(() => ['Todas', ...sedesUnicas(laboratorios.value)]);
+// Obtener sedes únicas
+const sedes = computed(() => [
+  'Todas',
+  ...sedesUnicas(laboratorios.value),
+]);
 
+// Aplicar filtros
 const laboratoriosFiltrados = computed(() => {
   const texto = busqueda.value.trim().toLowerCase();
 
@@ -78,24 +127,39 @@ const laboratoriosFiltrados = computed(() => {
       !texto ||
       lab.nombre.toLowerCase().includes(texto) ||
       lab.sede.toLowerCase().includes(texto) ||
-      (lab.equipos || []).some((eq) => eq.toLowerCase().includes(texto));
+      (lab.equipos || []).some((equipo) =>
+        equipo.toLowerCase().includes(texto)
+      );
 
-    const coincideSede = sede.value === 'Todas' || lab.sede === sede.value;
-    const coincideEstado = !soloDisponibles.value || lab.estado === 'disponible';
+    const coincideSede =
+      sede.value === 'Todas' || lab.sede === sede.value;
+
+    const coincideEstado =
+      !soloDisponibles.value ||
+      lab.estado === 'disponible';
 
     return coincideTexto && coincideSede && coincideEstado;
   });
 });
 
-// Matriz bidimensional: filas = laboratorios filtrados, columnas = franjas horarias
-const matrizDisponibilidad = computed(() =>
-  laboratoriosFiltrados.value.map((lab) => ({
-    laboratorio: lab,
-    celdas: FRANJAS.map((franja) => {
+// Construir matriz bidimensional
+// Filas: laboratorios
+// Columnas: horarios
+const matrizDisponibilidad = computed(() => {
+  return laboratoriosFiltrados.value.map((lab) => {
+
+    const celdas = FRANJAS.map((franja) => {
+
+      // Si el laboratorio está en mantenimiento
       if (lab.estado === 'mantenimiento') {
-        return { franja, estado: 'mantenimiento', reserva: null };
+        return {
+          franja,
+          estado: 'mantenimiento',
+          reserva: null,
+        };
       }
 
+      // Crear bloque horario de una hora
       const bloque = new Reserva({
         laboratorioId: String(lab.id),
         fecha: fecha.value,
@@ -103,27 +167,62 @@ const matrizDisponibilidad = computed(() =>
         horaFin: franja.fin,
       });
 
-      const reservaActiva = reservas.value.find(
-        (r) =>
-          r.estado !== 'rechazada' &&
-          bloque.seCruzaCon({ ...r, laboratorioId: String(r.laboratorioId) }),
-      );
+      // Buscar reservas que se cruzan con el horario
+      const reservaActiva = reservas.value.find((reserva) => {
+
+        // Ignorar reservas rechazadas
+        if (reserva.estado === 'rechazada') {
+          return false;
+        }
+
+        // Comprobar fecha
+        if (reserva.fecha !== fecha.value) {
+          return false;
+        }
+
+        // Comprobar que pertenezca al mismo laboratorio
+        if (
+          String(reserva.laboratorioId) !== String(lab.id)
+        ) {
+          return false;
+        }
+
+        // Convertir reserva a objeto compatible con Reserva
+        const otraReserva = {
+          ...reserva,
+          laboratorioId: String(reserva.laboratorioId),
+        };
+
+        // Comprobar cruce de horarios
+        return bloque.seCruzaCon(otraReserva);
+      });
 
       return {
         franja,
-        estado: reservaActiva ? reservaActiva.estado : 'libre',
+        estado: reservaActiva
+          ? reservaActiva.estado
+          : 'libre',
         reserva: reservaActiva || null,
       };
-    }),
-  })),
-);
+    });
 
+    return {
+      laboratorio: lab,
+      celdas,
+    };
+  });
+});
+
+// Limpiar filtros
 function limpiarFiltros() {
   busqueda.value = '';
   sede.value = 'Todas';
+  fecha.value = obtenerFechaActual();
   soloDisponibles.value = false;
+  seleccion.value = null;
 }
 
+// Mostrar detalle de una celda
 function mostrarDetalleCelda(payload) {
   seleccion.value = payload;
 }
@@ -131,18 +230,38 @@ function mostrarDetalleCelda(payload) {
 
 <template>
   <div class="min-vh-100 bg-light py-4">
+
     <div class="container">
-      <header class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+
+      <!-- Encabezado -->
+      <header
+        class="d-flex flex-wrap justify-content-between
+        align-items-center gap-2 mb-4"
+      >
         <div>
-          <span class="badge bg-primary mb-1">CampusHub Kiosko (Vue 3)</span>
-          <h1 class="h3 mb-0">Disponibilidad de Laboratorios</h1>
+          <span class="badge bg-primary mb-1">
+            CampusHub Kiosko - Vue 3
+          </span>
+
+          <h1 class="h3 mb-0">
+            Disponibilidad de Laboratorios
+          </h1>
+
+          <p class="text-muted small mb-0">
+            Consulta los horarios disponibles del campus.
+          </p>
         </div>
+
         <div class="text-muted small">
-          Auto-actualización cada 30 s
-          <span v-if="ultimaActualizacion"> · Última: {{ ultimaActualizacion }}</span>
+          Actualización automática cada 30 segundos
+
+          <span v-if="ultimaActualizacion">
+            · Última: {{ ultimaActualizacion }}
+          </span>
         </div>
       </header>
 
+      <!-- Filtros -->
       <FiltrosKiosko
         v-model:busqueda="busqueda"
         v-model:sede="sede"
@@ -154,18 +273,35 @@ function mostrarDetalleCelda(payload) {
         @refrescar="cargarDatos"
       />
 
-      <div v-if="error" class="alert alert-danger d-flex justify-content-between align-items-center">
+      <!-- Error -->
+      <div
+        v-if="error"
+        class="alert alert-danger d-flex
+        justify-content-between align-items-center"
+      >
         <span>{{ error }}</span>
-        <button type="button" class="btn btn-outline-danger btn-sm" @click="cargarDatos">
+
+        <button
+          class="btn btn-outline-danger btn-sm"
+          @click="cargarDatos"
+        >
           Reintentar
         </button>
       </div>
 
-      <div v-else-if="cargando && laboratorios.length === 0" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status" />
-        <p class="mt-2 text-muted">Cargando grilla de disponibilidad...</p>
+      <!-- Cargando -->
+      <div
+        v-else-if="cargando && laboratorios.length === 0"
+        class="text-center py-5"
+      >
+        <div class="spinner-border text-primary"></div>
+
+        <p class="mt-2 text-muted">
+          Cargando disponibilidad...
+        </p>
       </div>
 
+      <!-- Grilla -->
       <GrillaDisponibilidad
         v-else
         :franjas="FRANJAS"
@@ -173,23 +309,55 @@ function mostrarDetalleCelda(payload) {
         @seleccionar-celda="mostrarDetalleCelda"
       />
 
-      <div v-if="seleccion" class="alert alert-secondary mt-3 d-flex justify-content-between align-items-center">
+      <!-- Detalle de celda -->
+      <div
+        v-if="seleccion"
+        class="alert alert-secondary mt-3
+        d-flex justify-content-between align-items-center"
+      >
         <div>
-          <strong>{{ seleccion.laboratorio.nombre }}</strong>
-          ({{ seleccion.celda.franja.etiqueta }}):
+          <strong>
+            {{ seleccion.laboratorio.nombre }}
+          </strong>
+
+          ({{ seleccion.celda.franja.etiqueta }})
+
           <span v-if="seleccion.celda.reserva">
-            Reserva <strong>{{ seleccion.celda.reserva.codigo }}</strong> —
-            {{ seleccion.celda.reserva.motivo }} ({{ seleccion.celda.estado }})
+            <br />
+
+            Reserva:
+            <strong>
+              {{ seleccion.celda.reserva.codigo }}
+            </strong>
+
+            — {{ seleccion.celda.reserva.motivo }}
+
+            ({{ seleccion.celda.estado }})
           </span>
-          <span v-else-if="seleccion.celda.estado === 'mantenimiento'">
-            En mantenimiento (no disponible para reservas).
+
+          <span
+            v-else-if="
+              seleccion.celda.estado === 'mantenimiento'
+            "
+          >
+            <br />
+            Laboratorio en mantenimiento.
           </span>
+
           <span v-else>
-            Franja libre para reservar el {{ fecha }}.
+            <br />
+            Horario libre para reservar el {{ fecha }}.
           </span>
         </div>
-        <button type="button" class="btn-close" aria-label="Cerrar" @click="seleccion = null" />
+
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Cerrar"
+          @click="seleccion = null"
+        ></button>
       </div>
+
     </div>
   </div>
 </template>

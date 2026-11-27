@@ -1,23 +1,25 @@
+
 <script setup>
+import CeldaHorario from './CeldaHorario.vue';
+
 defineProps({
-  franjas: { type: Array, required: true },
-  matriz: { type: Array, required: true },
+  franjas: {
+    type: Array,
+    required: true,
+  },
+  matriz: {
+    type: Array,
+    required: true,
+  },
 });
 
 const emit = defineEmits(['seleccionar-celda']);
 
-function claseCelda(estado) {
-  if (estado === 'mantenimiento') return 'table-secondary text-muted';
-  if (estado === 'aprobada') return 'table-danger text-danger-emphasis';
-  if (estado === 'pendiente') return 'table-warning text-dark';
-  return 'table-success text-success-emphasis';
-}
-
-function textoCelda(celda) {
-  if (celda.estado === 'mantenimiento') return 'Mantenimiento';
-  if (celda.estado === 'aprobada') return `Ocupado (${celda.reserva.codigo})`;
-  if (celda.estado === 'pendiente') return `Pendiente (${celda.reserva.codigo})`;
-  return 'Libre';
+function seleccionarCelda(laboratorio, celda) {
+  emit('seleccionar-celda', {
+    laboratorio,
+    celda,
+  });
 }
 </script>
 
@@ -31,6 +33,7 @@ function textoCelda(celda) {
       <thead class="table-dark">
         <tr>
           <th class="text-start">Laboratorio</th>
+
           <th v-for="franja in franjas" :key="franja.etiqueta">
             {{ franja.etiqueta }}
           </th>
@@ -38,27 +41,38 @@ function textoCelda(celda) {
       </thead>
 
       <tbody>
-        <tr v-for="fila in matriz" :key="fila.laboratorio.id">
+        <tr
+          v-for="fila in matriz"
+          :key="fila.laboratorio.id"
+        >
           <td class="text-start">
-            <div class="fw-bold">{{ fila.laboratorio.nombre }}</div>
+            <div class="fw-bold">
+              {{ fila.laboratorio.nombre }}
+            </div>
+
             <small class="text-muted">
-              {{ fila.laboratorio.sede }} · {{ fila.laboratorio.capacidad }} est.
+              {{ fila.laboratorio.sede }}
+              · {{ fila.laboratorio.capacidad }} estudiantes
             </small>
           </td>
 
-          <td
+          <CeldaHorario
             v-for="celda in fila.celdas"
             :key="celda.franja.etiqueta"
-            :class="claseCelda(celda.estado)"
-            role="button"
-            tabindex="0"
-            @click="emit('seleccionar-celda', { laboratorio: fila.laboratorio, celda })"
-            @keydown.enter="emit('seleccionar-celda', { laboratorio: fila.laboratorio, celda })"
-          >
-            <span class="small fw-semibold">{{ textoCelda(celda) }}</span>
-          </td>
+            :celda="celda"
+            @seleccionar="
+              seleccionarCelda(fila.laboratorio, $event)
+            "
+          />
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="d-flex flex-wrap gap-3 mt-3 small">
+    <span><span class="badge bg-success"> </span> Libre</span>
+    <span><span class="badge bg-warning"> </span> Pendiente</span>
+    <span><span class="badge bg-danger"> </span> Ocupado</span>
+    <span><span class="badge bg-secondary"> </span> Mantenimiento</span>
   </div>
 </template>
